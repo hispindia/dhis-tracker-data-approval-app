@@ -1,5 +1,5 @@
 //Controller for column show/hide
-psiReportsApp.controller('LeftBarMenuController',
+bidReportsApp.controller('LeftBarMenuController',
         function($scope,
                 $location) {
     $scope.showTodaySchedule = function(){

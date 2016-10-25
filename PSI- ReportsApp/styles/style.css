@@ -65,7 +65,7 @@ input.option {
 }
 
 textarea {
-    width: 280px;
+    width: 264px;
 }
 
 
@@ -278,9 +278,7 @@ input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spi
 }
 
 .table-borderless {
-    width: 60%;
-    height:5%;
-    margin: 0;
+    width: 100%;
     table-layout: fixed;
 }
 

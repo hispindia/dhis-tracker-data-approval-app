@@ -2,7 +2,7 @@
  * Created by hisp on 1/12/15.
  */
 
-var psiReportsApp = angular.module('psiReportsApp',['ui.bootstrap',
+var bidReportsApp = angular.module('bidReportsApp',['ui.bootstrap',
     'ngRoute',
     'ngCookies',
     'ngSanitize',
@@ -12,7 +12,7 @@ var psiReportsApp = angular.module('psiReportsApp',['ui.bootstrap',
     'd2Filters',
     'd2Services',
     'pascalprecht.translate',
-    'psiReportsAppServices'
+    'bidReportsAppServices'
 ])
 
 .config(function($routeProvider,$translateProvider){
@@ -22,8 +22,6 @@ var psiReportsApp = angular.module('psiReportsApp',['ui.bootstrap',
         }).when('/schedule-today', {
             templateUrl:'views/schedule-today.html',
             controller: 'TodayScheduleController'
-			
-       
         }).otherwise({
             redirectTo : '/'
         });
