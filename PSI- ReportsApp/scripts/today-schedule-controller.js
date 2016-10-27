@@ -8,8 +8,11 @@ bidReportsApp
                                             $timeout,
                                             MetadataService){
 
-        const SQLVIEW_TEI_PS = "nBCleImsp8E";
-        const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
+       // const SQLVIEW_TEI_PS = "nBCleImsp8E";
+       // const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
+
+        const SQLVIEW_TEI_PS =  "abCbclBlomN";
+        const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
 
        $timeout(function(){
             $scope.date = {};
@@ -33,6 +36,15 @@ bidReportsApp
                 });
             });
         }
+
+        $scope.fnExcelReport = function(){
+
+            var blob = new Blob([document.getElementById('divId').innerHTML], {
+                type: 'text/plain;charset=utf-8'
+            });
+            saveAs(blob, "Report.xls");
+
+        };
 
        $scope.generateReport = function(program){
 

@@ -38,11 +38,13 @@
         <div class="col-md-6 trim">
             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode)" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
         </div>
+        <div class="col-md-6 trim">
+        <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> EXPORT To Excel </button>
     </div>
 
 </div>
-<div>
-    <table class="table-bordered">
+<div id ="divId">
+    <table id="tableid" class="table-bordered">
         <tr>
             <th colspan="{{program.programTrackedEntityAttributes.length}}">Attributes</th>
             <th ng-repeat="ps in program.programStages"
