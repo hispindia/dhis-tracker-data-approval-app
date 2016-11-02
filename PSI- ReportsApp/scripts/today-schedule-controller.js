@@ -1,7 +1,21 @@
 /**
  * Created by hisp on 2/12/15.
  */
-
+bidReportsApp.directive('calendar', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, el, attr, ngModel) {
+            $(el).datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (dateText) {
+                    scope.$apply(function () {
+                        ngModel.$setViewValue(dateText);
+                    });
+                }
+            });
+        }
+    };
+});
 bidReportsApp
     .controller('TodayScheduleController', function( $rootScope,
                                             $scope,
@@ -37,6 +51,16 @@ bidReportsApp
             });
         }
 
+        $scope.updateStartDate = function(startdate){
+            $scope.startdateSelected = startdate;
+            //  alert("$scope.startdateSelected---"+$scope.startdateSelected);
+        };
+
+        $scope.updateEndDate = function(enddate){
+            $scope.enddateSelected = enddate;
+            //  alert("$scope.enddateSelected---"+ $scope.enddateSelected);
+        };
+
         $scope.fnExcelReport = function(){
 
             var blob = new Blob([document.getElementById('divId').innerHTML], {
@@ -56,7 +80,8 @@ bidReportsApp
                    }
                }
 
-           var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+moment($scope.date.startDate).format("YYYY-MM-DD")+"&var=enddate:"+moment($scope.date.endDate).format("YYYY-MM-DD");
+         //  var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+moment($scope.date.startDate).format("YYYY-MM-DD")+"&var=enddate:"+moment($scope.date.endDate).format("YYYY-MM-DD");
+           var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+$scope.startdateSelected+"&var=enddate:"+$scope.enddateSelected;
 
            MetadataService.getSQLView(SQLVIEW_TEI_PS,param).then(function(stageData){
                $scope.stageData = stageData;
@@ -91,7 +116,8 @@ bidReportsApp
             const index_tei = 0;
             const index_attruid = 2;
             const index_attrvalue = 3;
-            const index_attrname = 4;
+           // const index_attrname = 4;
+            const index_ouname = 4;
 
             // For Data values
             const index_deuid = 5;
@@ -99,18 +125,25 @@ bidReportsApp
             const index_ps = 1;
             const index_ev = 3;
             const index_evDate = 4;
+            const index_ou = 8;
+
 
             for (var i=0;i<attrData.height;i++){
                 var teiuid = attrData.rows[i][index_tei];
                 var attruid = attrData.rows[i][index_attruid];
                 var attrvalue = attrData.rows[i][index_attrvalue];
+                var ouname = attrData.rows[0][index_ouname];
 
                 if (teiWiseAttrMap[teiuid] == undefined){
                     teiWiseAttrMap[teiuid] = [];
                 }
                 teiWiseAttrMap[teiuid].push(attrData.rows[i]);
+               // $scope.attrMap[teiuid+"-"+attruid] = ouname;
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
+
             }
+
+           // $scope.attrMap[teiuid+"-"+attruid] = ouname;
 
             for (key in teiWiseAttrMap){
                 $scope.teiList.push({teiuid : key});
@@ -129,6 +162,7 @@ bidReportsApp
                 var evDate = stageData.rows[i][index_evDate];
                 var deuid = stageData.rows[i][index_deuid];
                 var devalue = stageData.rows[i][index_devalue];
+                var ou = stageData.rows[i][index_ou];
 
                 if (!teiPsMap[teiuid + "-" + psuid]){
                     teiPsMap[teiuid + "-" + psuid] = 0;
@@ -145,7 +179,8 @@ bidReportsApp
                                 evuid : evuid,
                                 evDate : evDate,
                                 deuid : deuid,
-                                devalue : devalue
+                                devalue : devalue,
+                                ou : ou
                 }
 
                 teiEventMap[teiuid].push(event);
@@ -179,14 +214,22 @@ bidReportsApp
                for (var j=0;j<events.length;j++){
                    var dataValues = [];
                    var eventuid = events[j].evuid;
+                   var org =events[j].ou;
+                   var eventDate = events[j].evDate;
+                   eventDate = eventDate.substring(0, 10)
+
+                   dataValues.push(org);
+                   dataValues.push(eventDate);
 
                    for (var k=0;k<$scope.psDEs.length;k++){
 
                        var deuid = $scope.psDEs[k].dataElement.id;
-                       var value = teiPsEventDeMap[teiuid + "-" +eventuid + "-" + deuid ];
+                       var value = teiPsEventDeMap[teiuid + "-" +eventuid + "-" + deuid];
                             if (!value) value="";
                       dataValues.push(value);
                    }
+                   //dataValues.push(org);
+
                    $scope.eventList[teiuid].push(dataValues);
                }
             }

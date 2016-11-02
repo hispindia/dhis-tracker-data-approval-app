@@ -32,8 +32,10 @@
         </table>
         <label>Choose Dates Between </label>
 
-        <input type="date" ng-model="date.startDate" id="startDate" > {{startDate}} <b>AND</b>
-        <input type="date" ng-model="date.endDate" id="endate">
+      <!--  <input type="date" ng-model="date.startDate" id="startDate" > {{startDate}} <b>AND</b>
+        <input type="date" ng-model="date.endDate" id="endate">-->
+        <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
+        <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
 
         <div class="col-md-6 trim">
             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode)" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
@@ -48,11 +50,15 @@
         <tr>
             <th colspan="{{program.programTrackedEntityAttributes.length}}">Attributes</th>
             <th ng-repeat="ps in program.programStages"
-                colspan="{{ps.programStageDataElements.length}}">{{ps.name}}</th>
+                colspan="{{ps.programStageDataElements.length+1+1}}">{{ps.name}}</th>
         </tr>
         <tr>
+            <!--<th>organisation unit</th>-->
             <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.name}}</th>
+            <th>organisation unit</th>
+            <th>event date</th>
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
+            <!--<th>organisation unit</th>-->
         </tr>
         <tbody ng-repeat="tei in teiList">
         <tr >
