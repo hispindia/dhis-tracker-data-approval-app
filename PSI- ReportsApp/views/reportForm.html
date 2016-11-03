@@ -51,12 +51,13 @@
             <th colspan="{{program.programTrackedEntityAttributes.length}}">Attributes</th>
             <th ng-repeat="ps in program.programStages"
                 colspan="{{ps.programStageDataElements.length+1+1}}">{{ps.name}}</th>
+
         </tr>
         <tr>
             <!--<th>organisation unit</th>-->
             <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.name}}</th>
-            <th>organisation unit</th>
-            <th>event date</th>
+             <!--<th ng-repeat="ou in OUAndEventDate" >{{ou}}</th>-->
+
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
             <!--<th>organisation unit</th>-->
         </tr>

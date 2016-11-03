@@ -74,7 +74,11 @@ bidReportsApp
 
                $scope.program = program;
                $scope.psDEs = [];
-               for (var i=0;i<$scope.program.programStages.length;i++){
+
+           for (var i=0;i<$scope.program.programStages.length;i++){
+               $scope.psDEs.push({dataElement : {name :"organisation unit"}});
+               $scope.psDEs.push({dataElement : {name:"event date"}});
+
                    for (var j=0;j<$scope.program.programStages[i].programStageDataElements.length;j++){
                        $scope.psDEs.push($scope.program.programStages[i].programStageDataElements[j]);
                    }
@@ -204,6 +208,7 @@ bidReportsApp
                 }
             }
 
+
             for (var i=0;i<$scope.teiList.length;i++){
 
                var teiuid = $scope.teiList[i].teiuid;
@@ -217,11 +222,11 @@ bidReportsApp
                    var org =events[j].ou;
                    var eventDate = events[j].evDate;
                    eventDate = eventDate.substring(0, 10)
-
+debugger
                    dataValues.push(org);
                    dataValues.push(eventDate);
 
-                   for (var k=0;k<$scope.psDEs.length;k++){
+                   for (var k=2;k<$scope.psDEs.length;k++){
 
                        var deuid = $scope.psDEs[k].dataElement.id;
                        var value = teiPsEventDeMap[teiuid + "-" +eventuid + "-" + deuid];
