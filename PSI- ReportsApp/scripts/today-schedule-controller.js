@@ -75,7 +75,6 @@ bidReportsApp
                $scope.program = program;
                $scope.psDEs = [];
                for (var i=0;i<$scope.program.programStages.length;i++){
-
                    $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit"}});
                    $scope.psDEs.push({dataElement : {id : "eventDate",name : "eventDate"}});
 
@@ -208,6 +207,7 @@ bidReportsApp
                 }
             }
 
+
             for (var i=0;i<$scope.teiList.length;i++){
 
                var teiuid = $scope.teiList[i].teiuid;
@@ -221,7 +221,6 @@ bidReportsApp
                    var org =events[j].ou;
                    var eventDate = events[j].evDate;
                    eventDate = eventDate.substring(0, 10)
-
 
                    for (var k=0;k<$scope.psDEs.length;k++){
 
