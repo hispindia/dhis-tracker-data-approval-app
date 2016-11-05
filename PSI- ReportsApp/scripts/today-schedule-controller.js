@@ -159,11 +159,24 @@ bidReportsApp
                 }
                 teiWiseAttrMap[teiuid].push(attrData.rows[i]);
                 // $scope.attrMap[teiuid+"-"+attruid] = ouname;
+
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
+
+                for(m in $scope.Options){
+
+                    if(attrvalue+'_index' == m){
+
+                        $scope.attrMap[teiuid+"-"+attruid] = $scope.Options[m];
+                    }
+                    //else{
+                    //    $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
+                    //}
+                }
+               // $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
 
             }
 
-            // $scope.attrMap[teiuid+"-"+attruid] = ouname;
+
 
             for (key in teiWiseAttrMap){
                 $scope.teiList.push({teiuid : key});
