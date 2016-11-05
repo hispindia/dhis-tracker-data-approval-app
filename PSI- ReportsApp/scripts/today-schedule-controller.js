@@ -18,17 +18,17 @@ bidReportsApp.directive('calendar', function () {
 });
 bidReportsApp
     .controller('TodayScheduleController', function( $rootScope,
-                                            $scope,
-                                            $timeout,
-                                            MetadataService){
+                                                     $scope,
+                                                     $timeout,
+                                                     MetadataService){
 
-       // const SQLVIEW_TEI_PS = "nBCleImsp8E";
-       // const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
+        // const SQLVIEW_TEI_PS = "nBCleImsp8E";
+        // const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
 
         const SQLVIEW_TEI_PS =  "abCbclBlomN";
         const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
 
-       $timeout(function(){
+        $timeout(function(){
             $scope.date = {};
             $scope.date.startDate = new Date();
             $scope.date.endDate = new Date();
@@ -70,38 +70,55 @@ bidReportsApp
 
         };
 
-       $scope.generateReport = function(program){
+        $scope.generateReport = function(program){
 
-               $scope.program = program;
-               $scope.psDEs = [];
-               for (var i=0;i<$scope.program.programStages.length;i++){
-                   $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit"}});
-                   $scope.psDEs.push({dataElement : {id : "eventDate",name : "eventDate"}});
+            $scope.program = program;
+            $scope.psDEs = [];
+            $scope.Options =[];
+            var options = [];
+            var index=0;
+            for (var i=0;i<$scope.program.programStages.length;i++){
+                $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit"}});
+                $scope.psDEs.push({dataElement : {id : "eventDate",name : "eventDate"}});
 
-                   for (var j=0;j<$scope.program.programStages[i].programStageDataElements.length;j++){
-                       $scope.psDEs.push($scope.program.programStages[i].programStageDataElements[j]);
-                   }
-               }
+                for (var j=0;j<$scope.program.programStages[i].programStageDataElements.length;j++){
+                    $scope.psDEs.push($scope.program.programStages[i].programStageDataElements[j]);
 
-         //  var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+moment($scope.date.startDate).format("YYYY-MM-DD")+"&var=enddate:"+moment($scope.date.endDate).format("YYYY-MM-DD");
-           var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+$scope.startdateSelected+"&var=enddate:"+$scope.enddateSelected;
+                    if ($scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet != undefined) {
+                        if ($scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
 
-           MetadataService.getSQLView(SQLVIEW_TEI_PS,param).then(function(stageData){
-               $scope.stageData = stageData;
+                            for (var k = 0; k < $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
+                                index=index+1; // $scope.Options.push($scope.program.programStages[i].programStageDataElements[j]);
+                                var code = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
+                                var name = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
 
-               MetadataService.getSQLView(SQLVIEW_TEI_ATTR,param).then(function(attrData){
-                   $scope.attrData = attrData;
+                                options.push({code:code,name:name});
+                                $scope.Options[$scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
+                            }
+                        }
+                    }
+                }
+            }
+            //   $scope.Options = prepareIdToObjectMap(options,"code");
+            //  var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+moment($scope.date.startDate).format("YYYY-MM-DD")+"&var=enddate:"+moment($scope.date.endDate).format("YYYY-MM-DD");
+            var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+$scope.startdateSelected+"&var=enddate:"+$scope.enddateSelected;
 
-                   arrangeData($scope.stageData,$scope.attrData);
-               })
+            MetadataService.getSQLView(SQLVIEW_TEI_PS,param).then(function(stageData){
+                $scope.stageData = stageData;
+
+                MetadataService.getSQLView(SQLVIEW_TEI_ATTR,param).then(function(attrData){
+                    $scope.attrData = attrData;
+
+                    arrangeData($scope.stageData,$scope.attrData);
+                })
             })
-       }
+        }
 
         function arrangeData(stageData,attrData){
 
             var report = [{
-                    teiuid : ""
-                }]
+                teiuid : ""
+            }]
 
             var teiWiseAttrMap = [];
             $scope.attrMap = [];
@@ -119,7 +136,7 @@ bidReportsApp
             const index_tei = 0;
             const index_attruid = 2;
             const index_attrvalue = 3;
-           // const index_attrname = 4;
+            // const index_attrname = 4;
             const index_ouname = 4;
 
             // For Data values
@@ -141,12 +158,12 @@ bidReportsApp
                     teiWiseAttrMap[teiuid] = [];
                 }
                 teiWiseAttrMap[teiuid].push(attrData.rows[i]);
-               // $scope.attrMap[teiuid+"-"+attruid] = ouname;
+                // $scope.attrMap[teiuid+"-"+attruid] = ouname;
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
 
             }
 
-           // $scope.attrMap[teiuid+"-"+attruid] = ouname;
+            // $scope.attrMap[teiuid+"-"+attruid] = ouname;
 
             for (key in teiWiseAttrMap){
                 $scope.teiList.push({teiuid : key});
@@ -179,11 +196,11 @@ bidReportsApp
                     teiEventMap[teiuid] = [];
                 }
                 var event = {
-                                evuid : evuid,
-                                evDate : evDate,
-                                deuid : deuid,
-                                devalue : devalue,
-                                ou : ou
+                    evuid : evuid,
+                    evDate : evDate,
+                    deuid : deuid,
+                    devalue : devalue,
+                    ou : ou
                 }
 
                 teiEventMap[teiuid].push(event);
@@ -210,34 +227,59 @@ bidReportsApp
 
             for (var i=0;i<$scope.teiList.length;i++){
 
-               var teiuid = $scope.teiList[i].teiuid;
-               var events = teiEventMap[teiuid];
+                var teiuid = $scope.teiList[i].teiuid;
+                var events = teiEventMap[teiuid];
                 $scope.eventList[teiuid] = [];
 
                 if(!events){ $scope.eventList.push({}); continue}
-               for (var j=0;j<events.length;j++){
-                   var dataValues = [];
-                   var eventuid = events[j].evuid;
-                   var org =events[j].ou;
-                   var eventDate = events[j].evDate;
-                   eventDate = eventDate.substring(0, 10)
+                for (var j=0;j<events.length;j++){
+                    var dataValues = [];
+                    var eventuid = events[j].evuid;
+                    var org =events[j].ou;
+                    var eventDate = events[j].evDate;
+                    eventDate = eventDate.substring(0, 10)
 
-                   for (var k=0;k<$scope.psDEs.length;k++){
+                   /* for (var k=0;k<$scope.psDEs.length;k++){
 
-                       var deuid = $scope.psDEs[k].dataElement.id;
-                       var value = teiPsEventDeMap[teiuid + "-" +eventuid + "-" + deuid];
-                            if (!value) value="";
-                            if (deuid == "orgUnit"){
-                                value = org;debugger
-                            }else if (deuid == "eventDate"){
-                                value = eventDate;debugger
+                        var deuid = $scope.psDEs[k].dataElement.id;
+                        var value = teiPsEventDeMap[teiuid + "-" +eventuid + "-" + deuid];
+                        if (!value) value="";
+                        if (deuid == "orgUnit"){
+                            value = org;debugger
+                        }else if (deuid == "eventDate"){
+                            value = eventDate;debugger
+                        }
+                        dataValues.push(value);
+                    }*/
+                    for (var k = 0; k < $scope.psDEs.length; k++) {
+
+                        var deuid = $scope.psDEs[k].dataElement.id;
+                        var value = teiPsEventDeMap[teiuid + "-" + eventuid + "-" + deuid];
+                        if (!value) value = "";
+                        if (deuid == "orgUnit") {
+                            value = org;//debugger
+                        } else if (deuid == "eventDate") {
+                            value = eventDate;//debugger
+                        }
+                       // dataValues.push(value);
+                          if($scope.psDEs[k].dataElement.optionSet != undefined){
+
+                            if($scope.psDEs[k].dataElement.optionSet.options != undefined){
+
+                                value = $scope.Options[value+'_index'];
+                                if (!value)
+                                    value="";
+                              //  dataValues.push(value);
+
                             }
-                      dataValues.push(value);
-                   }
-                   //dataValues.push(org);
+                        }
+                        dataValues.push(value);
 
-                   $scope.eventList[teiuid].push(dataValues);
-               }
+                    }
+                    //dataValues.push(org);
+
+                    $scope.eventList[teiuid].push(dataValues);
+                }
             }
             debugger
 
@@ -247,3 +289,4 @@ bidReportsApp
 
         }
     });
+	
