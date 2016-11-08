@@ -1,7 +1,7 @@
 /**
  * Created by hisp on 2/12/15.
  */
-bidReportsApp.directive('calendar', function () {
+trackerReportsApp.directive('calendar', function () {
     return {
         require: 'ngModel',
         link: function (scope, el, attr, ngModel) {
@@ -16,7 +16,7 @@ bidReportsApp.directive('calendar', function () {
         }
     };
 });
-bidReportsApp
+trackerReportsApp
     .controller('TodayScheduleController', function( $rootScope,
                                                      $scope,
                                                      $timeout,
@@ -27,7 +27,7 @@ bidReportsApp
 
         const SQLVIEW_TEI_PS =  "abCbclBlomN";
         const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
-
+        $scope.allPrograms =[];
         $timeout(function(){
             $scope.date = {};
             $scope.date.startDate = new Date();
@@ -39,16 +39,29 @@ bidReportsApp
 
         // Listen for OU changes
         selection.setListenerFunction(function(){
+            getAllPrograms();
+
             $scope.selectedOrgUnitUid = selection.getSelected();
             loadPrograms();
         },false);
 
+        getAllPrograms = function(){
+        MetadataService.getAllPrograms().then(function(prog) {
+
+                $scope.allPrograms=prog.programs;
+
+            });
+        }
+
         loadPrograms = function(){
+
+
             MetadataService.getOrgUnit($scope.selectedOrgUnitUid).then(function(orgUnit){
                 $timeout(function(){
                     $scope.selectedOrgUnit = orgUnit;
                 });
             });
+          //  });
         }
 
         $scope.updateStartDate = function(startdate){
