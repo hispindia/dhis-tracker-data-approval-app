@@ -26,7 +26,9 @@ var trackerReportsAppServices = angular.module('trackerReportsAppServices', [])
                    dataType: "json",
                    contentType: "application/json",
 
-                   url: '../../programs.json?fields=id,name,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false',
+                  url: '../../programs.json?fields=id,name,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false',
+                 //  url: '../../programs.json?fields=id,name,programTrackedEntityAttributes[trackedEntityAttribute[*]],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false',
+
                    success: function (data) {
                        def.resolve(data);
                    }

@@ -86,8 +86,20 @@ trackerReportsApp
         $scope.generateReport = function(program){
 
             $scope.program = program;
+
+            for(var i=0; i<$scope.program.programTrackedEntityAttributes.length;i++){
+                var str = $scope.program.programTrackedEntityAttributes[i].displayName;
+                var n = str.lastIndexOf('-');
+                $scope.program.programTrackedEntityAttributes[i].displayName = str.substring(n + 1);
+
+            }
+
+
+           // $scope.program.programTrackedEntityAttributes[0]=({name:"Enrollment Date"});
             $scope.psDEs = [];
             $scope.Options =[];
+            $scope.attribute = "Attributes";
+            $scope.enrollment =["Enrollment date" , "Enrolling orgUnit"];
             var options = [];
             var index=0;
             for (var i=0;i<$scope.program.programStages.length;i++){
@@ -138,6 +150,8 @@ trackerReportsApp
             $scope.teiList = [];
             $scope.eventList = [];
             $scope.maxEventPerTei = [];
+            $scope.teiEnrollOrgMap = [];
+            $scope.teiEnrollMap =[];
 
             var teiPsMap = [];
             var teiPsEventMap = [];
@@ -151,6 +165,7 @@ trackerReportsApp
             const index_attrvalue = 3;
             // const index_attrname = 4;
             const index_ouname = 4;
+            const index_enrollmentDate = 5;
 
             // For Data values
             const index_deuid = 5;
@@ -165,7 +180,8 @@ trackerReportsApp
                 var teiuid = attrData.rows[i][index_tei];
                 var attruid = attrData.rows[i][index_attruid];
                 var attrvalue = attrData.rows[i][index_attrvalue];
-                var ouname = attrData.rows[0][index_ouname];
+                var ouname = attrData.rows[i][index_ouname]; // enrolling org
+                var enrollDate = attrData.rows[i][index_enrollmentDate]; // enrollment date
 
                 if (teiWiseAttrMap[teiuid] == undefined){
                     teiWiseAttrMap[teiuid] = [];
@@ -174,6 +190,8 @@ trackerReportsApp
                 // $scope.attrMap[teiuid+"-"+attruid] = ouname;
 
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
+                $scope.teiEnrollMap[teiuid+"-enrollDate"] = enrollDate;
+                $scope.teiEnrollOrgMap[teiuid+"-ouname"] = ouname;
 
                 for(m in $scope.Options){
 
@@ -181,15 +199,14 @@ trackerReportsApp
 
                         $scope.attrMap[teiuid+"-"+attruid] = $scope.Options[m];
                     }
-                    //else{
-                    //    $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
-                    //}
+
                 }
-               // $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
+            //   $scope.attrMap[teiuid+"-"+attruid] = enrollDate;
+              //  $scope.attrMap.push(enrollDate);
 
             }
 
-
+          //  $scope.attrMap[teiuid+"-"+"enrollDate"]=enrollDate;
 
             for (key in teiWiseAttrMap){
                 $scope.teiList.push({teiuid : key});

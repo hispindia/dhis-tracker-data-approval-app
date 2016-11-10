@@ -25,7 +25,7 @@
 
                             ng-options="program.name for program in allPrograms | orderBy: 'name'">
                             <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
-                        <!--<option value="">{{allPrograms}}</option>-->
+                        <option value="">Please select program</option>
                     </select>
                 </td>
             </tr>
@@ -39,6 +39,8 @@
         <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
         <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
 
+
+
         <div class="col-md-6 trim">
             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode)" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
         </div>
@@ -50,20 +52,24 @@
 <div id ="divId">
     <table id="tableid" class="table-bordered">
         <tr>
-            <th colspan="{{program.programTrackedEntityAttributes.length}}">Attributes</th>
+            <th colspan="{{program.programTrackedEntityAttributes.length+2}}">{{attribute}}</th>
             <th ng-repeat="ps in program.programStages"
-                colspan="{{ps.programStageDataElements.length}}">{{ps.name}}</th>
+                colspan="{{ps.programStageDataElements.length+2}}">{{ps.name}}</th>
 
         </tr>
         <tr>
-            <!--<th>organisation unit</th>-->
-            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.name}}</th>
+            <!--<th>Enrollment date</th>-->
+            <!--<th>Enrolling orgUnit</th>-->
+            <th ng-repeat="enrol in enrollment">{{enrol}}</th>
+            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{"IN 3si-"+attr.displayName}}</th>
 
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
             <!--<th>organisation unit</th>-->
         </tr>
         <tbody ng-repeat="tei in teiList">
         <tr >
+            <td rowspan="{{maxEventPerTei[tei.teiuid]+1}}">{{teiEnrollMap[tei.teiuid+"-enrollDate"]}}</td>
+            <td rowspan="{{maxEventPerTei[tei.teiuid]+1}}">{{teiEnrollOrgMap[tei.teiuid+"-ouname"]}}</td>
             <td rowspan="{{maxEventPerTei[tei.teiuid]+1}}" ng-repeat="attr in program.programTrackedEntityAttributes">{{attrMap[tei.teiuid+"-"+attr.trackedEntityAttribute.id]}} </td>
         </tr>
         <tr ng-repeat="event in eventList[tei.teiuid]">

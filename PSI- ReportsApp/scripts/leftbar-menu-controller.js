@@ -1,5 +1,5 @@
 //Controller for column show/hide
-bidReportsApp.controller('LeftBarMenuController',
+trackerReportsApp.controller('LeftBarMenuController',
         function($scope,
                 $location) {
     $scope.showTodaySchedule = function(){
