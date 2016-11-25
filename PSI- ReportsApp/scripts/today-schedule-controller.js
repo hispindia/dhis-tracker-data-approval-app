@@ -212,8 +212,8 @@ msfReportsApp
                // $scope.attrMap[teiuid+"-"+attruid] = ouname;
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
 
-                $scope.teiEnrollMap[teiuid+"-enrollDate"] = enrollDate;
-                $scope.teiEnrollOrgMap[teiuid+"-ouname"] = ouname;
+             //   $scope.teiEnrollMap[teiuid+"-enrollDate"] = enrollDate;
+              //  $scope.teiEnrollOrgMap[teiuid+"-ouname"] = ouname;
 
                 for(m in $scope.Options){
 

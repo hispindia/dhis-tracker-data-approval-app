@@ -53,16 +53,16 @@
 </div>
 
 <div id ="divId">
-    <table id="tableid" class="table-bordered" >
+    <table id="tableid" class="table-bordered" style="float:left" >
         <tr>
-            <th colspan="{{program.programTrackedEntityAttributes.length+2}}">Attributes</th>
+            <th colspan="{{program.programTrackedEntityAttributes.length+2}}">{{attribute}}</th>
             <th ng-repeat="ps in program.programStages"
                 colspan="{{ps.programStageDataElements.length+2}}">{{ps.name}}</th>
 
         </tr>
         <tr>
             <th ng-repeat="enrol in enrollment">{{enrol}}</th>
-            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.name}}</th>
+            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{"IN 3si-"+attr.displayName}}</th>
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
 
         </tr>
@@ -76,18 +76,18 @@
         <tr ng-repeat="event in eventList[tei] track by $index">
             <td ng-repeat="value in event track by $index">{{value}}</td>
         </tr>
-        <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">!</td></tr>
+        <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">.</td></tr>
 
         </tbody>
 
     </table>
 </div>
     </div>
-<div class="row" ng-if="selectedOrgUnit.programs.length < 1">
+<!--<div class="row" ng-if="selectedOrgUnit.programs.length < 1">
     <div class="col-sm-8 col-md-6 vertical-spacing">
         <div class="alert alert-warning">{{'no_program_exists_report'| translate}}</div> 
     </div>
-</div>
+</div> -->
 <div class="row" ng-if="selectedOrgUnit.programs.length > 0 && !selectedProgram">
     <div class="col-sm-8 col-md-6 vertical-spacing">
         <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div> 
