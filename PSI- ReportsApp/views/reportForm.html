@@ -69,8 +69,8 @@
 
         <tbody ng-repeat="tei in teiList">
         <tr>
-            <td rowspan="{{maxEventPerTei[tei.teiuid]+2}}">{{teiEnrollMap[tei.teiuid+"-enrollDate"]}}</td>
-            <td rowspan="{{maxEventPerTei[tei.teiuid]+2}}">{{teiEnrollOrgMap[tei.teiuid+"-ouname"]}}</td>
+            <td rowspan="{{teiPerPsEventListMap[tei].max+1}}">{{teiEnrollMap[tei+"-enrollDate"]}}</td>
+            <td rowspan="{{teiPerPsEventListMap[tei].max+1}}">{{teiEnrollOrgMap[tei+"-ouname"]}}</td>
             <td rowspan="{{teiPerPsEventListMap[tei].max+1}}" ng-repeat="attr in program.programTrackedEntityAttributes">{{attrMap[tei+"-"+attr.trackedEntityAttribute.id]}} </td>
         </tr>
         <tr ng-repeat="event in eventList[tei] track by $index">
