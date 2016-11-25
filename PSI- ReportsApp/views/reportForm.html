@@ -20,16 +20,20 @@
                     {{'programs'| translate}}
                 </td>
                 <td class='col-sm-4 col-md-3'>
+                    <!--<select ng-model="selectedProgram"-->
+                            <!--class="form-control"-->
+                            <!--ng-options="program as program.name for program in selectedOrgUnit.programs | orderBy: 'name'"-->
+                            <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <!--<option value="">{{selectedOrgUnit.programs.length > 0 ? 'please_select' : 'no_program_exists'| translate}}</option>-->
                     <select ng-model="selectedProgram"
                             class="form-control"
 
                             ng-options="program.name for program in allPrograms | orderBy: 'name'">
-                            <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
                         <option value="">Please select program</option>
                     </select>
                 </td>
             </tr>
-
 
         </table>
         <label>Choose Dates Between </label>
@@ -39,53 +43,53 @@
         <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
         <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
 
-
-
         <div class="col-md-6 trim">
-            <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode)" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
+            <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
         </div>
         <div class="col-md-6 trim">
         <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> EXPORT To Excel </button>
     </div>
 
 </div>
+
 <div id ="divId">
-    <table id="tableid" class="table-bordered">
+    <table id="tableid" class="table-bordered" >
         <tr>
-            <th colspan="{{program.programTrackedEntityAttributes.length+2}}">{{attribute}}</th>
+            <th colspan="{{program.programTrackedEntityAttributes.length+2}}">Attributes</th>
             <th ng-repeat="ps in program.programStages"
                 colspan="{{ps.programStageDataElements.length+2}}">{{ps.name}}</th>
 
         </tr>
         <tr>
-            <!--<th>Enrollment date</th>-->
-            <!--<th>Enrolling orgUnit</th>-->
             <th ng-repeat="enrol in enrollment">{{enrol}}</th>
-            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{"IN 3si-"+attr.displayName}}</th>
-
+            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.name}}</th>
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
-            <!--<th>organisation unit</th>-->
+
         </tr>
+
         <tbody ng-repeat="tei in teiList">
-        <tr >
-            <td rowspan="{{maxEventPerTei[tei.teiuid]+1}}">{{teiEnrollMap[tei.teiuid+"-enrollDate"]}}</td>
-            <td rowspan="{{maxEventPerTei[tei.teiuid]+1}}">{{teiEnrollOrgMap[tei.teiuid+"-ouname"]}}</td>
-            <td rowspan="{{maxEventPerTei[tei.teiuid]+1}}" ng-repeat="attr in program.programTrackedEntityAttributes">{{attrMap[tei.teiuid+"-"+attr.trackedEntityAttribute.id]}} </td>
+        <tr>
+            <td rowspan="{{maxEventPerTei[tei.teiuid]+2}}">{{teiEnrollMap[tei.teiuid+"-enrollDate"]}}</td>
+            <td rowspan="{{maxEventPerTei[tei.teiuid]+2}}">{{teiEnrollOrgMap[tei.teiuid+"-ouname"]}}</td>
+            <td rowspan="{{teiPerPsEventListMap[tei].max+1}}" ng-repeat="attr in program.programTrackedEntityAttributes">{{attrMap[tei+"-"+attr.trackedEntityAttribute.id]}} </td>
         </tr>
-        <tr ng-repeat="event in eventList[tei.teiuid]">
+        <tr ng-repeat="event in eventList[tei] track by $index">
             <td ng-repeat="value in event track by $index">{{value}}</td>
         </tr>
+        <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">!</td></tr>
+
         </tbody>
 
     </table>
 </div>
+    </div>
 <div class="row" ng-if="selectedOrgUnit.programs.length < 1">
     <div class="col-sm-8 col-md-6 vertical-spacing">
-        <div class="alert alert-warning">{{'no_program_exists_report'| translate}}</div>
+        <div class="alert alert-warning">{{'no_program_exists_report'| translate}}</div> 
     </div>
 </div>
 <div class="row" ng-if="selectedOrgUnit.programs.length > 0 && !selectedProgram">
     <div class="col-sm-8 col-md-6 vertical-spacing">
-        <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div>
+        <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div> 
     </div>
 </div>
