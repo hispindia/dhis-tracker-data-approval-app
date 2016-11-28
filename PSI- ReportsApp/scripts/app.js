@@ -2,7 +2,7 @@
  * Created by hisp on 1/12/15.
  */
 
-var trackerReportsApp = angular.module('trackerReportsApp',['ui.bootstrap',
+var msfReportsApp = angular.module('msfReportsApp',['ui.bootstrap',
     'ngRoute',
     'ngCookies',
     'ngSanitize',
@@ -12,7 +12,7 @@ var trackerReportsApp = angular.module('trackerReportsApp',['ui.bootstrap',
     'd2Filters',
     'd2Services',
     'pascalprecht.translate',
-    'trackerReportsAppServices'
+    'msfReportsAppServices'
 ])
 
 .config(function($routeProvider,$translateProvider){
@@ -22,6 +22,11 @@ var trackerReportsApp = angular.module('trackerReportsApp',['ui.bootstrap',
         }).when('/schedule-today', {
             templateUrl:'views/schedule-today.html',
             controller: 'TodayScheduleController'
+
+        }).when('/event-report', {
+            templateUrl:'views/event-report.html',
+            controller: 'EventController'
+
         }).otherwise({
             redirectTo : '/'
         });

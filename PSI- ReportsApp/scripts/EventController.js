@@ -1,4 +1,7 @@
 /**
+ * Created by HISP-WS12 on 28-11-2016.
+ */
+/**
  * Created by hisp on 2/12/15.
  */
 msfReportsApp.directive('calendar', function () {
@@ -17,24 +20,23 @@ msfReportsApp.directive('calendar', function () {
     };
 });
 msfReportsApp
-    .controller('TodayScheduleController', function( $rootScope,
-                                            $scope,
-                                            $timeout,
-                                            MetadataService){
+    .controller('EventController', function( $rootScope,
+                                                     $scope,
+                                                     $timeout,
+                                                     MetadataService){
 
-       // const SQLVIEW_TEI_PS = "nBCleImsp8E";
-       // const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
-       // const SQLVIEW_TEI_PS =  "EX2dsz6vmES";
+        // const SQLVIEW_TEI_PS = "nBCleImsp8E";
+        // const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
+        // const SQLVIEW_TEI_PS =  "EX2dsz6vmES";
         // const SQLVIEW_TEI_ATTR = "pUiDfNYflvv";
 
         const SQLVIEW_TEI_PS =  "abCbclBlomN";
-         const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
-        const SQLVIEW_TEI_PS_NO_ENROLLMENT = "Naxu5A8nnpn";
+        const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
 
         jQuery(document).ready(function () {
             hideLoad();
         })
-       $timeout(function(){
+        $timeout(function(){
             $scope.date = {};
             $scope.date.startDate = new Date();
             $scope.date.endDate = new Date();
@@ -83,77 +85,77 @@ msfReportsApp
 
         };
 
-       $scope.generateReport = function(program){
+        $scope.generateReport = function(program){
 
-               $scope.program = program;
+            $scope.program = program;
 
-           for(var i=0; i<$scope.program.programTrackedEntityAttributes.length;i++){
-               var str = $scope.program.programTrackedEntityAttributes[i].displayName;
-               var n = str.lastIndexOf('-');
-               $scope.program.programTrackedEntityAttributes[i].displayName = str.substring(n + 1);
+            for(var i=0; i<$scope.program.programTrackedEntityAttributes.length;i++){
+                var str = $scope.program.programTrackedEntityAttributes[i].displayName;
+                var n = str.lastIndexOf('-');
+                $scope.program.programTrackedEntityAttributes[i].displayName = str.substring(n + 1);
 
-           }
-               $scope.psDEs = [];
-           $scope.Options =[];
-           $scope.attribute = "Attributes";
-           $scope.enrollment =["Enrollment date" , "Enrolling orgUnit"];
-           var options = [];
+            }
+            $scope.psDEs = [];
+            $scope.Options =[];
+            $scope.attribute = "Attributes";
+            $scope.enrollment =["Enrollment date" , "Enrolling orgUnit"];
+            var options = [];
 
-           var index=0;
-           for (var i=0;i<$scope.program.programStages.length;i++){
+            var index=0;
+            for (var i=0;i<$scope.program.programStages.length;i++){
 
-               var psuid = $scope.program.programStages[i].id;
-               $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit",ps:psuid}});
-               $scope.psDEs.push({dataElement : {id : "eventDate",name : "eventDate",ps:psuid}});
+                var psuid = $scope.program.programStages[i].id;
+                $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit",ps:psuid}});
+                $scope.psDEs.push({dataElement : {id : "eventDate",name : "eventDate",ps:psuid}});
 
-               for (var j=0;j<$scope.program.programStages[i].programStageDataElements.length;j++){
+                for (var j=0;j<$scope.program.programStages[i].programStageDataElements.length;j++){
 
-                       $scope.program.programStages[i].programStageDataElements[j].dataElement.ps = psuid;
-                   var de =$scope.program.programStages[i].programStageDataElements[j];
-                       $scope.psDEs.push(de);
+                    $scope.program.programStages[i].programStageDataElements[j].dataElement.ps = psuid;
+                    var de =$scope.program.programStages[i].programStageDataElements[j];
+                    $scope.psDEs.push(de);
 
-                   if ($scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet != undefined) {
-                       if ($scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
+                    if ($scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet != undefined) {
+                        if ($scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
 
-                           for (var k = 0; k < $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
-                               index=index+1; // $scope.Options.push($scope.program.programStages[i].programStageDataElements[j]);
-                               var code = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
-                               var name = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
+                            for (var k = 0; k < $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
+                                index=index+1; // $scope.Options.push($scope.program.programStages[i].programStageDataElements[j]);
+                                var code = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
+                                var name = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
 
-                               options.push({code:code,name:name});
-                               $scope.Options[$scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
-                           }
-                       }
-                   }
-                   }
-
-
-               }
+                                options.push({code:code,name:name});
+                                $scope.Options[$scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
+                            }
+                        }
+                    }
+                }
 
 
-         //  var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+moment($scope.date.startDate).format("YYYY-MM-DD")+"&var=enddate:"+moment($scope.date.endDate).format("YYYY-MM-DD");
-           var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+$scope.startdateSelected+"&var=enddate:"+$scope.enddateSelected;
-
-                    MetadataService.getSQLView(SQLVIEW_TEI_PS, param).then(function (stageData) {
-                        $scope.stageData = stageData;
-
-                        MetadataService.getSQLView(SQLVIEW_TEI_ATTR, param).then(function (attrData) {
-                            $scope.attrData = attrData;
-
-                            arrangeDataX($scope.stageData, $scope.attrData);
-                        })
-                    })
+            }
 
 
-       }
+            //  var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+moment($scope.date.startDate).format("YYYY-MM-DD")+"&var=enddate:"+moment($scope.date.endDate).format("YYYY-MM-DD");
+            var param = "var=program:"+program.id + "&var=orgunit:"+$scope.selectedOrgUnit.id+"&var=startdate:"+$scope.startdateSelected+"&var=enddate:"+$scope.enddateSelected;
+
+            MetadataService.getSQLView(SQLVIEW_TEI_PS, param).then(function (stageData) {
+                $scope.stageData = stageData;
+
+                MetadataService.getSQLView(SQLVIEW_TEI_ATTR, param).then(function (attrData) {
+                    $scope.attrData = attrData;
+
+                    arrangeDataX($scope.stageData, $scope.attrData);
+                })
+            })
+
+
+        }
 
         function showLoad()
         {// alert( "inside showload method 1" );
             setTimeout(function(){
 
 
-              //  document.getElementById('load').style.visibility="visible";
-             //   document.getElementById('tableid').style.visibility="hidden";
+                //  document.getElementById('load').style.visibility="visible";
+                //   document.getElementById('tableid').style.visibility="hidden";
 
             },1000);
 
@@ -161,16 +163,16 @@ msfReportsApp
         }
         function hideLoad() {
 
-          //  document.getElementById('load').style.visibility="hidden";
-          //  document.getElementById('tableid').style.visibility="visible";
+            //  document.getElementById('load').style.visibility="hidden";
+            //  document.getElementById('tableid').style.visibility="visible";
 
 
         }
         function arrangeData(stageData,attrData){
 
             var report = [{
-                    teiuid : ""
-                }]
+                teiuid : ""
+            }]
 
             var teiWiseAttrMap = [];
             $scope.attrMap = [];
@@ -188,7 +190,7 @@ msfReportsApp
             const index_tei = 0;
             const index_attruid = 2;
             const index_attrvalue = 3;
-           // const index_attrname = 4;
+            // const index_attrname = 4;
             const index_ouname = 4;
 
             // For Data values
@@ -210,11 +212,11 @@ msfReportsApp
                     teiWiseAttrMap[teiuid] = [];
                 }
                 teiWiseAttrMap[teiuid].push(attrData.rows[i]);
-               // $scope.attrMap[teiuid+"-"+attruid] = ouname;
+                // $scope.attrMap[teiuid+"-"+attruid] = ouname;
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
 
-             //   $scope.teiEnrollMap[teiuid+"-enrollDate"] = enrollDate;
-              //  $scope.teiEnrollOrgMap[teiuid+"-ouname"] = ouname;
+                //   $scope.teiEnrollMap[teiuid+"-enrollDate"] = enrollDate;
+                //  $scope.teiEnrollOrgMap[teiuid+"-ouname"] = ouname;
 
                 for(m in $scope.Options){
 
@@ -227,7 +229,7 @@ msfReportsApp
 
             }
 
-           // $scope.attrMap[teiuid+"-"+attruid] = ouname;
+            // $scope.attrMap[teiuid+"-"+attruid] = ouname;
 
             for (key in teiWiseAttrMap){
                 $scope.teiList.push({teiuid : key});
@@ -297,10 +299,10 @@ msfReportsApp
                     var dataValues = [];
                     var eventuid = events[j].evuid;
                     var org =events[j].ou;
-                   var eventDate = events[j].evDate;
+                    var eventDate = events[j].evDate;
 
                     for (var k=0;k<$scope.psDEs.length;k++){
-                       var deuid = $scope.psDEs[k].dataElement.id;
+                        var deuid = $scope.psDEs[k].dataElement.id;
 
                         var value = teiPsEventDeMap[teiuid + "-" +eventuid + "-" + deuid];
                         if (!value) value="";
@@ -311,7 +313,7 @@ msfReportsApp
                         }
                         dataValues.push(value);
                     }
-                   $scope.eventList[teiuid].push(dataValues);
+                    $scope.eventList[teiuid].push(dataValues);
 
                 }
             }
@@ -390,7 +392,7 @@ msfReportsApp
 
             for (key in teiWiseAttrMap){
                 $scope.teiList.push({teiuid : key});
-            //    $scope.attrMap =$scope.attrMap;
+                //    $scope.attrMap =$scope.attrMap;
             }
 
             $timeout(function(){
@@ -401,7 +403,7 @@ msfReportsApp
             var teiPerPsEventListMap = [];
             var teiToEventListMap = [];
             var eventToMiscMap = [];
-                eventToMiscMap["dummy"] = {ou : "" , evDate : ""};
+            eventToMiscMap["dummy"] = {ou : "" , evDate : ""};
             var teiList = [];
             for (var i=0;i<stageData.height;i++) {
                 var teiuid = stageData.rows[i][index_tei];
@@ -440,51 +442,51 @@ msfReportsApp
                 eventToMiscMap[evuid] = {ou : ou , evDate : evDate};
                 teiPsEventDeMap[teiuid + "-" + evuid + "-" + deuid] = devalue;
             }
-                var TheRows = [];
-                var psDes = $scope.psDEs;
+            var TheRows = [];
+            var psDes = $scope.psDEs;
 
-                for (key in teiList){
-                    var teiuid = key;
-                    $scope.eventList[teiuid] = [];
+            for (key in teiList){
+                var teiuid = key;
+                $scope.eventList[teiuid] = [];
 
-                    var maxEventCount = teiPerPsEventListMap[teiuid].max;
+                var maxEventCount = teiPerPsEventListMap[teiuid].max;
 
-                    if (maxEventCount == 0){debugger}
-                    for (var y=0;y<maxEventCount;y++){
+                if (maxEventCount == 0){debugger}
+                for (var y=0;y<maxEventCount;y++){
 
-                        TheRows = [];
-                        for (var x=0;x<psDes.length;x++){
+                    TheRows = [];
+                    for (var x=0;x<psDes.length;x++){
                         var psuid = psDes[x].dataElement.ps;
                         var deuid = psDes[x].dataElement.id;
-                            var evuid = undefined;
-                            if (teiPerPsEventListMap[teiuid][psuid]){
-                                 evuid = teiPerPsEventListMap[teiuid][psuid][y];
-                            }
-                            if (!evuid){
-                                evuid =  "dummy";
-                            }
-                            var val = teiPsEventDeMap[teiuid + "-" + evuid + "-" + deuid];
-                            if (deuid == "orgUnit") {debugger
-                                val = eventToMiscMap[evuid].ou;//debugger
-                            } else if (deuid == "eventDate") {
-                                val = eventToMiscMap[evuid].evDate;//debugger
-                            }
-                            if($scope.psDEs[x].dataElement.optionSet != undefined){
-
-                                if($scope.psDEs[x].dataElement.optionSet.options != undefined){
-
-                                    val = $scope.Options[val+'_index'];
-                                    if (!val)
-                                        val="";
-                                    //  dataValues.push(value);
-
-                                }
-                            }
-                            TheRows.push(val?val:"--");
+                        var evuid = undefined;
+                        if (teiPerPsEventListMap[teiuid][psuid]){
+                            evuid = teiPerPsEventListMap[teiuid][psuid][y];
                         }
-                        $scope.eventList[teiuid].push(TheRows);
+                        if (!evuid){
+                            evuid =  "dummy";
+                        }
+                        var val = teiPsEventDeMap[teiuid + "-" + evuid + "-" + deuid];
+                        if (deuid == "orgUnit") {debugger
+                            val = eventToMiscMap[evuid].ou;//debugger
+                        } else if (deuid == "eventDate") {
+                            val = eventToMiscMap[evuid].evDate;//debugger
+                        }
+                        if($scope.psDEs[x].dataElement.optionSet != undefined){
+
+                            if($scope.psDEs[x].dataElement.optionSet.options != undefined){
+
+                                val = $scope.Options[val+'_index'];
+                                if (!val)
+                                    val="";
+                                //  dataValues.push(value);
+
+                            }
+                        }
+                        TheRows.push(val?val:"--");
                     }
+                    $scope.eventList[teiuid].push(TheRows);
                 }
+            }
 
             $scope.teiPerPsEventListMap = teiPerPsEventListMap;
             $scope.teiList = Object.keys(teiList);
