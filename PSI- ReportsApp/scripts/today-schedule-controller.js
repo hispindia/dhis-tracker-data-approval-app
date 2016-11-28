@@ -29,7 +29,6 @@ msfReportsApp
 
         const SQLVIEW_TEI_PS =  "abCbclBlomN";
          const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
-        const SQLVIEW_TEI_PS_NO_ENROLLMENT = "Naxu5A8nnpn";
 
         jQuery(document).ready(function () {
             hideLoad();
@@ -59,8 +58,16 @@ msfReportsApp
         }
         getAllPrograms = function(){
             MetadataService.getAllPrograms().then(function(prog) {
+                $scope.allPrograms = prog.programs;
+                $scope.trackerPrograms = [];
+                for(var i=0; i<prog.programs.length;i++){
+                    if(prog.programs[i].withoutRegistration == false){
+                        $scope.trackerPrograms.push(prog.programs[i]);
 
-                $scope.allPrograms=prog.programs;
+                    }
+
+                }
+
 
             });
         }
