@@ -59,18 +59,15 @@ msfReportsApp
         getAllPrograms = function(){
             MetadataService.getAllPrograms().then(function(prog) {
                 $scope.allPrograms = prog.programs;
-                $scope.trackerPrograms = [];
+                $scope.programs = [];
                 for(var i=0; i<prog.programs.length;i++){
                     if(prog.programs[i].withoutRegistration == false){
-                        $scope.trackerPrograms.push(prog.programs[i]);
-
+                        $scope.programs.push(prog.programs[i]);
                     }
-
                 }
-
-
             });
         }
+
         $scope.updateStartDate = function(startdate){
             $scope.startdateSelected = startdate;
             //  alert("$scope.startdateSelected---"+$scope.startdateSelected);

@@ -25,7 +25,7 @@ var msfReportsApp = angular.module('msfReportsApp',['ui.bootstrap',
 
         }).when('/event-report', {
             templateUrl:'views/event-report.html',
-            controller: 'EventController'
+            controller: 'EventReportController'
 
         }).otherwise({
             redirectTo : '/'

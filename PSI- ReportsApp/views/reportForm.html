@@ -27,7 +27,7 @@
                         <!--<option value="">{{selectedOrgUnit.programs.length > 0 ? 'please_select' : 'no_program_exists'| translate}}</option>-->
                     <select ng-model="selectedProgram"
                             class="form-control"
-                            ng-options="program.name for program in trackerPrograms | orderBy: 'name'">
+                            ng-options="program.name for program in programs | orderBy: 'name'">
                         <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
                         <option value="">Please select program</option>
                     </select>
