@@ -31,7 +31,7 @@ msfReportsApp
 
         const SQLVIEW_TEI_PS =  "abCbclBlomN";
         const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
-        const SQLVIEW_EVENT = "WJmXKR5zBwV";
+        const SQLVIEW_EVENT = "IQ78273FQtF";
 
         jQuery(document).ready(function () {
             hideLoad();
@@ -199,8 +199,17 @@ msfReportsApp
                                             de : deuid,
                                             value : devalue
                 });
-
                 $scope.eventDeWiseValueMap[evuid + "-" + deuid] = devalue;
+
+
+                for(m in $scope.Options){
+
+                    if(devalue+'_index' == m){
+
+                        $scope.eventDeWiseValueMap[evuid + "-" + deuid] = $scope.Options[m];
+                    }
+
+                }
             }
 
             $timeout(function(){
