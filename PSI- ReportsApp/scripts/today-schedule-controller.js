@@ -27,8 +27,8 @@ msfReportsApp
        // const SQLVIEW_TEI_PS =  "EX2dsz6vmES";
         // const SQLVIEW_TEI_ATTR = "pUiDfNYflvv";
 
-        const SQLVIEW_TEI_PS =  "abCbclBlomN";
-         const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
+        const SQLVIEW_TEI_PS =  "FcXYoEGIQIR";
+         const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
 
         jQuery(document).ready(function () {
             hideLoad();
@@ -351,7 +351,7 @@ msfReportsApp
             const index_attrvalue = 3;
             // const index_attrname = 4;
             const index_ouname = 4;
-            const index_enrollmentDate = 5;
+            const index_enrollmentDate = 9;
 
             // For Data values
             const index_deuid = 5;

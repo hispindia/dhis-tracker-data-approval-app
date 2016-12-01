@@ -29,8 +29,8 @@ msfReportsApp
         // const SQLVIEW_TEI_PS =  "EX2dsz6vmES";
         // const SQLVIEW_TEI_ATTR = "pUiDfNYflvv";
 
-        const SQLVIEW_TEI_PS =  "abCbclBlomN";
-        const SQLVIEW_TEI_ATTR = "GeoFWM61aQw";
+        const SQLVIEW_TEI_PS =  "FcXYoEGIQIR";
+        const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
         const SQLVIEW_EVENT = "IQ78273FQtF";
 
         jQuery(document).ready(function () {

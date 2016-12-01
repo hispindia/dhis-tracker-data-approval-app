@@ -32,7 +32,7 @@
         </tr>
 
         </table>
-        <label>Choose Dates Between </label>
+        <label>Choose Date Between </label>
 
         <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
         <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
@@ -41,7 +41,7 @@
             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
         </div>
         <div class="col-md-6 trim">
-            <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> EXPORT To Excel </button>
+            <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> Export To Excel </button>
         </div>
 
     </div>
