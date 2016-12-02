@@ -34,4 +34,5 @@ var msfReportsApp = angular.module('msfReportsApp',['ui.bootstrap',
         $translateProvider.preferredLanguage('en');
         $translateProvider.useSanitizeValueStrategy('escaped');
         $translateProvider.useLoader('i18nLoader');
+
     })

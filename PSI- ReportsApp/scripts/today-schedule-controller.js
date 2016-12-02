@@ -351,7 +351,7 @@ msfReportsApp
             const index_attrvalue = 3;
             // const index_attrname = 4;
             const index_ouname = 4;
-            const index_enrollmentDate = 9;
+            const index_enrollmentDate = 5;
 
             // For Data values
             const index_deuid = 5;
