@@ -119,3 +119,41 @@ function isJson(item) {
 
     return false;
 }
+
+ function createSQLView(sqlView){
+     var name = sqlView.name;
+    var def = $.Deferred();
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data : JSON.stringify(sqlView),
+        url: '../../sqlViews',
+        success: function (data) {
+            data.name = name;
+            def.resolve(data);
+        },
+        error : function(a,b,c){
+            debugger
+        }
+    });
+    return def;
+}
+
+
+function getAllSQLViews(){
+    var def = $.Deferred();
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        url: '../../sqlViews?fields=[id,name]&paging=false',
+        success: function (data) {
+            def.resolve(data.sqlViews);
+        },
+        error : function(a,b,c){
+            debugger
+        }
+    });
+    return def;
+}

@@ -33,14 +33,15 @@
                     </select>
                 </td>
             </tr>
+            <tr>
+                <td> <label>Choose Date Between </label></td>
+                <td>
+                <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
+                <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
+                </td>
+            </tr>
 
         </table>
-        <label>Choose Date Between </label>
-
-      <!--  <input type="date" ng-model="date.startDate" id="startDate" > {{startDate}} <b>AND</b>
-        <input type="date" ng-model="date.endDate" id="endate">-->
-        <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
-        <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
 
         <div class="col-md-6 trim">
             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
@@ -61,7 +62,7 @@
         </tr>
         <tr>
             <th ng-repeat="enrol in enrollment">{{enrol}}</th>
-            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{"IN 3si-"+attr.displayName}}</th>
+            <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.displayName}}</th>
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
 
         </tr>
@@ -75,8 +76,8 @@
         <tr ng-repeat="event in eventList[tei] track by $index">
             <td ng-repeat="value in event track by $index">{{value}}</td>
         </tr>
-        <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">.</td></tr>
-
+       <!-- <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">.</td></tr>
+-->
         </tbody>
 
     </table>
