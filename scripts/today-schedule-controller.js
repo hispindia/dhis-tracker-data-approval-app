@@ -214,6 +214,7 @@ msfReportsApp
                 var attrvalue = attrData.rows[i][index_attrvalue];
                 var ouname = attrData.rows[0][index_ouname];
                 var enrollDate = attrData.rows[i][index_enrollmentDate]; // enrollment date
+                enrollDate = enrollDate.substring(0, 10);
 
                 if (teiWiseAttrMap[teiuid] == undefined){
                     teiWiseAttrMap[teiuid] = [];
@@ -256,6 +257,8 @@ msfReportsApp
                 var psuid = stageData.rows[i][index_ps];
                 var evuid = stageData.rows[i][index_ev];
                 var evDate = stageData.rows[i][index_evDate];
+				evDate = evDate.substring(0, 10);
+
                 var deuid = stageData.rows[i][index_deuid];
                 var devalue = stageData.rows[i][index_devalue];
                 var ou = stageData.rows[i][index_ou];

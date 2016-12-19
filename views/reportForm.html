@@ -27,7 +27,7 @@
                         <!--<option value="">{{selectedOrgUnit.programs.length > 0 ? 'please_select' : 'no_program_exists'| translate}}</option>-->
                     <select ng-model="selectedProgram"
                             class="form-control"
-                            ng-options="program.name for program in programs | orderBy: 'name'">
+                            ng-options="program.name for program in programs | orderBy: 'name' ">
                         <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
                         <option value="">Please select program</option>
                     </select>
@@ -44,7 +44,7 @@
         </table>
 
         <div class="col-md-6 trim">
-            <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
+            <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
         </div>
         <div class="col-md-6 trim">
         <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> Export To Excel </button>
@@ -53,7 +53,7 @@
 </div>
 
 <div id ="divId">
-    <table id="tableid" class="table-bordered" style="float:left" >
+    <table id="tableid" class="table-bordered" border="1" style="float:left" >
         <tr>
             <th colspan="{{program.programTrackedEntityAttributes.length+2}}">{{attribute}}</th>
             <th ng-repeat="ps in program.programStages"
@@ -66,14 +66,25 @@
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
 
         </tr>
+        <!--merged tei and attributes-->
 
-        <tbody ng-repeat="tei in teiList">
+      <!--  <tbody ng-repeat="tei in teiList">
         <tr>
             <td rowspan="{{teiPerPsEventListMap[tei].max+1}}">{{teiEnrollMap[tei+"-enrollDate"]}}</td>
             <td rowspan="{{teiPerPsEventListMap[tei].max+1}}">{{teiEnrollOrgMap[tei+"-ouname"]}}</td>
             <td rowspan="{{teiPerPsEventListMap[tei].max+1}}" ng-repeat="attr in program.programTrackedEntityAttributes">{{attrMap[tei+"-"+attr.trackedEntityAttribute.id]}} </td>
         </tr>
         <tr ng-repeat="event in eventList[tei] track by $index">
+            <td ng-repeat="value in event track by $index">{{value}}</td>
+        </tr>-->
+
+
+        <tbody ng-repeat="tei in teiList"> <!--for unmerged tei and attributes-- repeat tei for all its events -->
+        <tr  ng-repeat="event in eventList[tei] track by $index" >
+            <td>{{teiEnrollMap[tei+"-enrollDate"]}}</td>
+            <td>{{teiEnrollOrgMap[tei+"-ouname"]}}</td>
+            <td  ng-repeat="attr in program.programTrackedEntityAttributes">{{attrMap[tei+"-"+attr.trackedEntityAttribute.id]}} </td>
+
             <td ng-repeat="value in event track by $index">{{value}}</td>
         </tr>
        <!-- <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">.</td></tr>
