@@ -24,11 +24,9 @@ msfReportsApp
                                                      $timeout,
                                                      MetadataService){
 
-        // const SQLVIEW_TEI_PS = "nBCleImsp8E";
-        // const SQLVIEW_TEI_ATTR = "NJKQr9q6kOO";
-        // const SQLVIEW_TEI_PS =  "EX2dsz6vmES";
-        // const SQLVIEW_TEI_ATTR = "pUiDfNYflvv";
 
+
+ //Production IDS
         const SQLVIEW_TEI_PS =  "FcXYoEGIQIR";
         const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
         const SQLVIEW_EVENT = "IQ78273FQtF";
@@ -179,6 +177,7 @@ msfReportsApp
                 var psuid = stageData.rows[i][index_ps];
                 var evuid = stageData.rows[i][index_ev];
                 var evDate = stageData.rows[i][index_evDate];
+                evDate = evDate.substring(0, 10);
                 var deuid = stageData.rows[i][index_deuid];
                 var devalue = stageData.rows[i][index_devalue];
                 var ou = stageData.rows[i][index_ou];

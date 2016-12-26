@@ -66,9 +66,9 @@
             <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
 
         </tr>
-        <!--merged tei and attributes-->
+        <!--merged tei and attributes, do not repeat tei for all its events-->
 
-      <!--  <tbody ng-repeat="tei in teiList">
+    <!--    <tbody ng-repeat="tei in teiList">
         <tr>
             <td rowspan="{{teiPerPsEventListMap[tei].max+1}}">{{teiEnrollMap[tei+"-enrollDate"]}}</td>
             <td rowspan="{{teiPerPsEventListMap[tei].max+1}}">{{teiEnrollOrgMap[tei+"-ouname"]}}</td>
@@ -78,8 +78,8 @@
             <td ng-repeat="value in event track by $index">{{value}}</td>
         </tr>-->
 
-
-        <tbody ng-repeat="tei in teiList"> <!--for unmerged tei and attributes-- repeat tei for all its events -->
+        <!--for unmerged tei and attributes-- repeat tei for all its events -->
+        <tbody ng-repeat="tei in teiList">
         <tr  ng-repeat="event in eventList[tei] track by $index" >
             <td>{{teiEnrollMap[tei+"-enrollDate"]}}</td>
             <td>{{teiEnrollOrgMap[tei+"-ouname"]}}</td>
@@ -87,6 +87,8 @@
 
             <td ng-repeat="value in event track by $index">{{value}}</td>
         </tr>
+
+
        <!-- <tr><td colspan = "{{program.programTrackedEntityAttributes.length + psDEs.length+2}}">.</td></tr>
 -->
         </tbody>
