@@ -31,6 +31,11 @@ msfReportsApp
         const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
         const SQLVIEW_EVENT = "IQ78273FQtF";
 
+        // local
+       // const SQLVIEW_TEI_PS =  "gCxkn0ha6lY";
+       // const SQLVIEW_TEI_ATTR = "HKe1QCVogz9";
+       // const SQLVIEW_EVENT = "bTNJn5CbnOY";
+
         jQuery(document).ready(function () {
             hideLoad();
         })
@@ -89,7 +94,9 @@ msfReportsApp
         };
 
         $scope.generateReport = function(program){
-
+            $scope.selectedOrgUnitName = $scope.selectedOrgUnit.name;
+            $scope.selectedStartDate = $scope.startdateSelected;
+            $scope.selectedEndDate = $scope.enddateSelected;
             $scope.program = program;
 
             for(var i=0; i<$scope.program.programTrackedEntityAttributes.length;i++){
@@ -101,6 +108,9 @@ msfReportsApp
             $scope.psDEs = [];
             $scope.Options =[];
             $scope.attribute = "Attributes";
+            $scope.org = "Organisation Unit : ";
+            $scope.start = "Start Date : ";
+            $scope.end = "End Date : ";
             $scope.enrollment =["Enrollment date" , "Enrolling orgUnit"];
             var options = [];
 
@@ -108,8 +118,9 @@ msfReportsApp
             for (var i=0;i<$scope.program.programStages.length;i++){
 
                 var psuid = $scope.program.programStages[i].id;
-                $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit",ps:psuid}});
+
                 $scope.psDEs.push({dataElement : {id : "eventDate",name : "eventDate",ps:psuid}});
+                $scope.psDEs.push({dataElement : {id : "orgUnit",name : "orgUnit",ps:psuid}});
 
                 for (var j=0;j<$scope.program.programStages[i].programStageDataElements.length;j++){
 

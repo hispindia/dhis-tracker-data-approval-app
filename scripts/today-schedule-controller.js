@@ -23,13 +23,13 @@ msfReportsApp
                                             MetadataService){
 
         //Production IDS
-      //  const SQLVIEW_TEI_PS =  "FcXYoEGIQIR";
-        // const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
+       const SQLVIEW_TEI_PS =  "FcXYoEGIQIR";
+        const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
 
 
         // local
-        const SQLVIEW_TEI_PS =  "gCxkn0ha6lY";
-        const SQLVIEW_TEI_ATTR = "HKe1QCVogz9";
+    //    const SQLVIEW_TEI_PS =  "gCxkn0ha6lY";
+     //   const SQLVIEW_TEI_ATTR = "HKe1QCVogz9";
 
         jQuery(document).ready(function () {
             hideLoad();
@@ -54,6 +54,8 @@ msfReportsApp
             MetadataService.getOrgUnit($scope.selectedOrgUnitUid).then(function(orgUnit){
                 $timeout(function(){
                     $scope.selectedOrgUnit = orgUnit;
+                  //  $scope.selectedOrgUnitName = orgUnit.name;
+
                 });
             });
         }
@@ -89,8 +91,10 @@ msfReportsApp
         };
 
        $scope.generateReport = function(program){
-
-               $scope.program = program;
+           $scope.selectedOrgUnitName = $scope.selectedOrgUnit.name;
+           $scope.selectedStartDate = $scope.startdateSelected;
+           $scope.selectedEndDate = $scope.enddateSelected;
+           $scope.program = program;
 
            for(var i=0; i<$scope.program.programTrackedEntityAttributes.length;i++){
                var str = $scope.program.programTrackedEntityAttributes[i].displayName;
@@ -101,7 +105,10 @@ msfReportsApp
                $scope.psDEs = [];
            $scope.Options =[];
            $scope.attribute = "Attributes";
+           $scope.org = "Organisation Unit : ";
            $scope.enrollment =["Enrollment date" , "Enrolling orgUnit"];
+           $scope.start = "Start Date : ";
+           $scope.end = "End Date : ";
            var options = [];
 
            var index=0;

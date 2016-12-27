@@ -48,6 +48,11 @@
 
     <div id ="divId">
         <table id="tableid" class="table-bordered" border="1" style="float:left" >
+            <tr style="outline: thin">
+                <th colspan="1">{{org}}{{selectedOrgUnitName}}</th>
+                <th colspan="1">{{start}}{{selectedStartDate}}</th>
+                <th colspan="1">{{end}}{{selectedEndDate}}</th>
+            </tr>
             <tr>
                 <th ng-repeat="ps in program.programStages"
                     colspan="{{ps.programStageDataElements.length+2}}">{{ps.name}}</th>
