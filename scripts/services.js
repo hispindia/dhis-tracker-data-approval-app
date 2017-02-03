@@ -45,6 +45,20 @@ var trackerReportsAppServices = angular.module('trackerReportsAppServices', [])
                    }
                });
                return def;
+           },
+
+           getEnrollmentsBetweenDateProgramAndOu : function(ou,prog,start,end){
+               var def = $.Deferred();
+               $.ajax({
+                   type: "GET",
+                   dataType: "json",
+                   contentType: "application/json",
+                   url: '../../enrollments.json?ou='+ou+'&ouMode=DESCENDANTS&program='+prog+'&programStartDate='+start+'&programEndDate='+end+'&skipPaging=true',
+                   success: function (data) {
+                       def.resolve(data);
+                   }
+               });
+               return def;
            }
        }
     });

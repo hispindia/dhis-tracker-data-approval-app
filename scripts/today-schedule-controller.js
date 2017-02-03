@@ -152,9 +152,12 @@ msfReportsApp
                         MetadataService.getSQLView(SQLViewsName2IdMap[SQLQUERY_TEI_ATTR_NAME], param).then(function (attrData) {
                             $scope.attrData = attrData;
 
-                            arrangeDataX($scope.stageData, $scope.attrData);
+                            MetadataService.getEnrollmentsBetweenDateProgramAndOu($scope.selectedOrgUnit.id,$scope.program.id,$scope.startdateSelected,$scope.enddateSelected).then(function(allenrollments){
+                                $scope.allenrollments = allenrollments;
+                            arrangeDataX($scope.stageData, $scope.attrData, $scope.allenrollments);
                         })
                     })
+       })
 
 
        }
@@ -178,7 +181,7 @@ msfReportsApp
 
 
         }
-        function arrangeDataX(stageData,attrData){
+        function arrangeDataX(stageData,attrData,allenrollments){
 
             var report = [{
                 teiuid : ""
@@ -215,7 +218,6 @@ msfReportsApp
             const index_evDate = 4;
             const index_ou = 8;
 
-
             for (var i=0;i<attrData.height;i++){
                 var teiuid = attrData.rows[i][index_tei];
                 var attruid = attrData.rows[i][index_attruid];
@@ -231,8 +233,13 @@ msfReportsApp
                 $scope.attrMap[teiuid+"-"+attruid] = attrvalue;
 
                 $scope.teiEnrollMap[teiuid+"-enrollDate"] = enrollDate;
-                $scope.teiEnrollOrgMap[teiuid+"-ouname"] = ouname;
 
+                for (var k=0; k< allenrollments.enrollments.length;k++) {
+                    if (allenrollments.enrollments[k].trackedEntityInstance == attrData.rows[i][0]) {
+                        $scope.teiEnrollOrgMap[teiuid + "-ouname"] = allenrollments.enrollments[k].orgUnitName;
+                    }
+                }
+            //    $scope.teiEnrollOrgMap[teiuid + "-ouname"] = ouname;
                 for(m in $scope.Options){
 
                     if(attrvalue+'_index' == m){
