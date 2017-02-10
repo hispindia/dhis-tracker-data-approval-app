@@ -12,6 +12,10 @@ data for all progam stages is shown in a consolidated manner on a single screen.
 
 The app uses SQL Views to fetch data and creates them on startup.
 
-INSTALLATION :
-Upload the zip file into DHIS2 through app manager module.
+Installation : Upload the zip file into DHIS2 through app manager module.
+
+###### TO DO :
+ * Data intensive functions to be run in separate threads
+ * Improvement in UI
+ * Reduce number of SQL Views
 
