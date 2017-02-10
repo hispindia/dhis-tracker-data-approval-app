@@ -42,7 +42,7 @@ const SQLQUERY_TEI_DATA_VALUE = "select tei.uid tei,ps.uid psuid,min(ps.name) ps
  group by tei.uid,ps.uid,psi.uid,psi.executiondate,de.uid,ou.name, pi.enrollmentdate\
  order by pi.enrollmentdate,tei.uid,psi.executiondate";
 
-const SQLQUERY_TEI_DATA_VALUE_NAME = "SQLQUERY_TEI_DATA_VALUE_V1";
+const SQLQUERY_TEI_DATA_VALUE_NAME = "TRACKER_REPORTS_TEI_DATA_VALUE_V1";
 
 const SQLQUERY_EVENT= "select ps.uid psuid,min(ps.name) psname,psi.uid ev ,psi.executiondate evdate,de.uid deuid,min(de.name) dename,min(tedv.value) devalue,ou.name, psi.executiondate::DATE\
  from programstageinstance psi\
@@ -62,7 +62,7 @@ const SQLQUERY_EVENT= "select ps.uid psuid,min(ps.name) psname,psi.uid ev ,psi.e
  group by ps.uid,psi.uid,psi.executiondate,de.uid,ou.name, psi.executiondate\
  order by psi.executiondate";
 
-const SQLQUERY_EVENT_NAME = "SQLQUERY_EVENT_V1";
+const SQLQUERY_EVENT_NAME = "TRACKER_REPORTS_EVENT_V1";
 
 const SQLView_Init = [
     {

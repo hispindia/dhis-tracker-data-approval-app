@@ -17,19 +17,10 @@ msfReportsApp.directive('calendar', function () {
     };
 });
 msfReportsApp
-    .controller('TodayScheduleController', function( $rootScope,
+    .controller('TrackerReportController', function( $rootScope,
                                             $scope,
                                             $timeout,
                                             MetadataService){
-
-        //Production IDS
-       const SQLVIEW_TEI_PS =  "FcXYoEGIQIR";
-        const SQLVIEW_TEI_ATTR = "WMIMrJEYUxl";
-
-
-        // local
-    //    const SQLVIEW_TEI_PS =  "gCxkn0ha6lY";
-     //   const SQLVIEW_TEI_ATTR = "HKe1QCVogz9";
 
         jQuery(document).ready(function () {
             hideLoad();
@@ -40,17 +31,18 @@ msfReportsApp
             $scope.date.endDate = new Date();
         },0);
 
+
+        getAllPrograms();
+
         //initially load tree
         selection.load();
-
         // Listen for OU changes
         selection.setListenerFunction(function(){
-            getAllPrograms();
             $scope.selectedOrgUnitUid = selection.getSelected();
-            loadPrograms();
+            loadOU();
         },false);
 
-        loadPrograms = function(){
+        loadOU = function(){
             MetadataService.getOrgUnit($scope.selectedOrgUnitUid).then(function(orgUnit){
                 $timeout(function(){
                     $scope.selectedOrgUnit = orgUnit;
@@ -59,15 +51,19 @@ msfReportsApp
                 });
             });
         }
-        getAllPrograms = function(){
+        function getAllPrograms (){
             MetadataService.getAllPrograms().then(function(prog) {
                 $scope.allPrograms = prog.programs;
                 $scope.programs = [];
                 for(var i=0; i<prog.programs.length;i++){
                     if(prog.programs[i].withoutRegistration == false){
+
                         $scope.programs.push(prog.programs[i]);
                     }
                 }
+                $timeout(function(){
+
+                })
             });
         }
 

@@ -19,9 +19,9 @@ var msfReportsApp = angular.module('msfReportsApp',['ui.bootstrap',
         $routeProvider.when('/', {
             templateUrl:'views/home.html',
             controller: 'homeController'
-        }).when('/schedule-today', {
-            templateUrl:'views/schedule-today.html',
-            controller: 'TodayScheduleController'
+        }).when('/tracker-report', {
+            templateUrl:'views/tracker-report.html',
+            controller: 'TrackerReportController'
 
         }).when('/event-report', {
             templateUrl:'views/event-report.html',

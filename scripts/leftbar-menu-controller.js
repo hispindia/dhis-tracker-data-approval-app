@@ -3,7 +3,7 @@ msfReportsApp.controller('LeftBarMenuController',
         function($scope,
                 $location) {
     $scope.showTodaySchedule = function(){
-        $location.path('/schedule-today').search();
+        $location.path('/tracker-report').search();
     };
             $scope.showEventReport = function(){
                 $location.path('/event-report').search();
