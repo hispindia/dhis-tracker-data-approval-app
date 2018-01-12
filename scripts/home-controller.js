@@ -3,11 +3,15 @@
  */
 
 dataApprovalApp
-.controller('homeController', function( $rootScope,
-                                         $scope,$location) {
-                                            $scope.showTodaySchedule = function () {
-                                                    $location.path('/schedule-today').search();
-                                            };
-
-
-    });
+        .controller('homeController', function ($rootScope,
+                $scope, $location) {
+                $scope.applicationsForApproval = function () {
+                        $location.path('/applications-for-approval').search();
+                },
+                        $scope.approvedList = function () {
+                                $location.path('/approved-list').search();
+                        },
+                        $scope.rejectedList = function () {
+                                $location.path('/rejected-list').search();
+                        };
+        });

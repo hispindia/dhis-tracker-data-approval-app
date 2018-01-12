@@ -19,9 +19,17 @@ var dataApprovalApp = angular.module('dataApprovalApp',['ui.bootstrap',
         $routeProvider.when('/', {
             templateUrl:'views/home.html',
             controller: 'homeController'
-        }).when('/schedule-today', {
-            templateUrl:'views/schedule-today.html',
-            controller: 'TodayScheduleController'
+        }).when('/applications-for-approval', {
+            templateUrl:'views/applications-for-approval.html',
+            controller: 'ApplicationsForApprovalController'
+
+        }).when('/approved-list', {
+            templateUrl:'views/approved-list.html',
+            controller: 'ApprovedListController'
+
+        }).when('/rejected-list', {
+            templateUrl:'views/rejected-list.html',
+            controller: 'RejectedListController'
 
         }).otherwise({
             redirectTo : '/'

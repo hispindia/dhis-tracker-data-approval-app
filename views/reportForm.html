@@ -61,8 +61,6 @@
 
             </tr>
             <tr style="background-color:rgb(211, 207, 201)">
-                <!--<th ng-repeat="enrol in enrollment">{{enrol}}</th>-->
-                <!-- <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.displayName}}</th> -->
                 <th>
                     {{enrollment}}
                 </th>
@@ -76,7 +74,7 @@
                     {{attribute3}}
                 </th>
                 <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
-                <th style="padding-left:25px;padding-right:25px;">
+                <th style="padding-left:36px;padding-right:36px;">
                     {{approved_reject}}
                 </th>
             </tr>
@@ -106,10 +104,10 @@
                     <td>
                         <button style="font-size:10pt;color:white;
                         background-color:green;border:2px solid #336600;padding:3px;width: 75px; margin-top: 1.5%; height: 40px; text-align: center;"
-                            id={{event.eventId}}_Approved ng-click="confirmPush($event,event.eventId,selectedProgram);">Approved</button>
+                            id={{event.eventId}}_Approved ng-click="confirmPush($event,event.eventId,selectedProgram,event);">Approved</button>
                         <button style="font-size:10pt;color:white;
                         background-color:red;border:2px solid #336600;padding:3px;width: 75px; margin-top: 1.5%; height: 40px; text-align: center;"
-                            id={{event.eventId}}_Reject ng-click="confirmPush($event,event.eventId,selectedProgram);">Rejected</button>
+                            id={{event.eventId}}_Reject ng-click="confirmPush($event,event.eventId,selectedProgram,event);">Rejected</button>
                     </td>
                 </tr>
             </tbody>

@@ -16,9 +16,9 @@ dataApprovalApp.directive('calendar', function () {
         }
     };
 });
-dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
+dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootScope,
     $scope,
-    $timeout, $q,
+    $timeout,
     MetadataService) {
 
     $scope.programStages = [];
@@ -47,8 +47,11 @@ dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
                 $scope.selectedOrgUnit = orgUnit;
                 $scope.allPrograms = orgUnit.programs;
                 $scope.programs = [];
+                $scope.programStages = [];
                 for (var i = 0; i < orgUnit.programs.length; i++) {
-                    $scope.programs.push(orgUnit.programs[i]);
+                    if (orgUnit.programs[i].withoutRegistration == false) {
+                        $scope.programs.push(orgUnit.programs[i]);
+                    }
                 }
             });
         });
@@ -65,10 +68,13 @@ dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
             });
         });
     }
+
     $scope.getSelectedProgramStage = function (selectedProgramStage) {
-        $scope.selectedPSName = [];
-        $scope.selectedPSName.push(selectedProgramStage);
-        $scope.selectedPSID = $scope.selectedPSName[0].id;
+        if (selectedProgramStage != null) {
+            $scope.selectedPSName = [];
+            $scope.selectedPSName.push(selectedProgramStage);
+            $scope.selectedPSID = $scope.selectedPSName[0].id;
+        }
     }
 
     $scope.updateStartDate = function (startdate) {
@@ -117,7 +123,7 @@ dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
             $scope.attribute1 = "Name of \"Fee for Service\" specialist";
             $scope.attribute2 = "Manav sampada ID(EHRMS id)";
             $scope.attribute3 = "Contact number";
-            $scope.approved_reject = "Approved/Rejected";
+            $scope.approved_reject = "Approve/Reject";
             $scope.enrollment = "Enrollment date";
             var options = [];
             $scope.eventDataValues = [];
@@ -137,19 +143,19 @@ dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
                     var de = $scope.selectedPS[i].programStageDataElements[j];
                     $scope.psDEs.push(de);
 
-                    if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet != undefined) {
-                        if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
+                    // if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet != undefined) {
+                    //     if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
 
-                            for (var k = 0; k < $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
-                                index = index + 1; // $scope.Options.push($scope.selectedPS[i].programStageDataElements[j]);
-                                var code = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
-                                var name = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
+                    //         for (var k = 0; k < $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
+                    //             index = index + 1; // $scope.Options.push($scope.selectedPS[i].programStageDataElements[j]);
+                    //             var code = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
+                    //             var name = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
 
-                                options.push({ code: code, name: name });
-                                $scope.Options[$scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
-                            }
-                        }
-                    }
+                    //             options.push({ code: code, name: name });
+                    //             $scope.Options[$scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
+                    //         }
+                    //     }
+                    // }
                 }
             }
 
@@ -255,11 +261,11 @@ dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
         })
     }
 
-    $scope.confirmPush = function (appr_reject1, eventId1, getProgram) {
+    $scope.confirmPush = function (appr_reject1, eventId1, getProgram, eventData) {
 
         $scope.appr_reject = appr_reject1.target.innerHTML;
         if ($scope.appr_reject == 'Approved') {
-            var retVal = confirm("Do you really want to Approve?");
+            var retVal = confirm("Are you sure want to Approve (Name: " + eventData.attributeValues0 + ", Event Date: " + eventData.eventDate + ") ?");
             if (retVal == true) {
                 $scope.pushDataelementValue(appr_reject1, eventId1, getProgram);
                 return true;
@@ -269,7 +275,7 @@ dataApprovalApp.controller('TodayScheduleController', function ($rootScope,
             }
         }
         else if ($scope.appr_reject == 'Rejected') {
-            var retVal = confirm("Do you really want to Reject?");
+            var retVal = confirm("Are you sure want to Reject (Name: " + eventData.attributeValues0 + ", Event Date: " + eventData.eventDate + ") ?");
             if (retVal == true) {
                 $scope.pushDataelementValue(appr_reject1, eventId1, getProgram);
                 return true;
