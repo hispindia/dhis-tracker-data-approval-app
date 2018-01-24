@@ -141,20 +141,6 @@ dataApprovalApp.controller('RejectedListController', function ($rootScope,
                     $scope.selectedPS[i].programStageDataElements[j].dataElement.ps = psuid;
                     var de = $scope.selectedPS[i].programStageDataElements[j];
                     $scope.psDEs.push(de);
-
-                    // if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet != undefined) {
-                    //     if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
-
-                    //         for (var k = 0; k < $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
-                    //             index = index + 1; // $scope.Options.push($scope.selectedPS[i].programStageDataElements[j]);
-                    //             var code = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
-                    //             var name = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
-
-                    //             options.push({ code: code, name: name });
-                    //             $scope.Options[$scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
-                    //         }
-                    //     }
-                    // }
                 }
             }
 
@@ -174,10 +160,6 @@ dataApprovalApp.controller('RejectedListController', function ($rootScope,
                         for (var a = 0; a < $scope.eventDV.length; a++) {
                             if ($scope.eventDV[a].value == 'Rejected') {
                                 $scope.colorName = "rgba(210, 85, 85, 0.85)";
-
-                                // else if ($scope.eventDV[a].value == 'Rejected') {
-                                //     $scope.colorName = "rgba(210, 85, 85, 0.85)";
-                                // }
 
                                 if (response.events[j].eventDate) {
                                     $scope.event_Date1 = response.events[j].eventDate;

@@ -31,23 +31,33 @@
             </tr>
             <tr>
                 <td>
-                    <label>Start Date </label>
+                    <label>Check to filter by Dates</label>
                 </td>
                 <td>
-                    <input calendar ng-model='startdate' class="form-control" ng-change="updateStartDate(startdate);" required />
+                    <input type="checkbox" ng-model="checked">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label ng-show="checked">Start Date </label>
                 </td>
                 <td>
-                    <label>End Date </label>
+                    <input calendar ng-model='startdate' id="startDate" ng-show="checked" class="form-control" ng-change="updateStartDate(startdate);"
+                        required />
                 </td>
                 <td>
-                    <input calendar ng-model='enddate' class="form-control" ng-change="updateEndDate(enddate);" required/>
+                    <label ng-show="checked">End Date </label>
+                </td>
+                <td>
+                    <input calendar ng-model='enddate' id="endDate" ng-show="checked" class="form-control" ng-change="updateEndDate(enddate);"
+                        required/>
                 </td>
             </tr>
 
         </table>
 
         <div class="col-md-12 trim">
-            <button type="button" class="btn btn-primary center-block" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();"
+            <button type="button" class="btn btn-primary center-block" ng-click="resubmitData(selectedProgram, report, selectedOuMode);showLoad();"
                 ng-disabled="!selectedProgram">{{'fetch_records'| translate}}</button>
         </div>
 
@@ -104,10 +114,10 @@
                     <td>
                         <button style="font-size:10pt;color:white;
                         background-color:green;border:2px solid #336600;padding:3px;width: 75px; margin-top: 1.5%; height: 40px; text-align: center;"
-                            id={{event.eventId}}_Approved ng-click="confirmPush($event,event.eventId,selectedProgram,event);">Approved</button>
+                            id={{event.eventId}}_Approved ng-click="confirmPush($event,event.eventId,selectedProgram,event);">Approve</button>
                         <button style="font-size:10pt;color:white;
                         background-color:red;border:2px solid #336600;padding:3px;width: 75px; margin-top: 1.5%; height: 40px; text-align: center;"
-                            id={{event.eventId}}_Reject ng-click="confirmPush($event,event.eventId,selectedProgram,event);">Rejected</button>
+                            id={{event.eventId}}_Reject ng-click="confirmPush($event,event.eventId,selectedProgram,event);">Reject</button>
                     </td>
                 </tr>
             </tbody>

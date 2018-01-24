@@ -141,20 +141,6 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                     $scope.selectedPS[i].programStageDataElements[j].dataElement.ps = psuid;
                     var de = $scope.selectedPS[i].programStageDataElements[j];
                     $scope.psDEs.push(de);
-
-                    // if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet != undefined) {
-                    //     if ($scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options != undefined) {
-
-                    //         for (var k = 0; k < $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options.length; k++) {
-                    //             index = index + 1; // $scope.Options.push($scope.selectedPS[i].programStageDataElements[j]);
-                    //             var code = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code;
-                    //             var name = $scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
-
-                    //             options.push({ code: code, name: name });
-                    //             $scope.Options[$scope.selectedPS[i].programStageDataElements[j].dataElement.optionSet.options[k].code + "_index"] = $scope.program.programStages[i].programStageDataElements[j].dataElement.optionSet.options[k].displayName;
-                    //         }
-                    //     }
-                    // }
                 }
             }
 
