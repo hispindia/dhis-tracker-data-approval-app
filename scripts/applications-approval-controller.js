@@ -49,7 +49,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 $scope.programs = [];
                 $scope.programStages = [];
                 for (var i = 0; i < orgUnit.programs.length; i++) {
-                    if (orgUnit.programs[i].withoutRegistration == false) {
+                    if (orgUnit.programs[i].name == "Gynaecologist - PBR monitoring" || orgUnit.programs[i].name == "Anaesthetist - PBR monitoring" || orgUnit.programs[i].name == "Paediatric - PBR monitoring") {
                         $scope.programs.push(orgUnit.programs[i]);
                     }
                 }
@@ -122,7 +122,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     status: "COMPLETED",
                                     dataValues: [
                                         {
-                                            "dataElement": "d6RFFVvuQDk",
+                                            "dataElement": "OZUfNtngt0T",
                                             "value": "Re-submitted"
                                         }
                                     ]
@@ -452,7 +452,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 status: "COMPLETED",
                 dataValues: [
                     {
-                        "dataElement": "d6RFFVvuQDk",
+                        "dataElement": "OZUfNtngt0T",
                         "value": "Approved"
                     }
                 ]
@@ -479,7 +479,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 status: "COMPLETED",
                 dataValues: [
                     {
-                        "dataElement": "cHUxAHazWgx",
+                        "dataElement": "CCNnr8s3rgE",
                         "value": ""
                     }
                 ]
@@ -508,7 +508,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 status: "ACTIVE",
                 dataValues: [
                     {
-                        "dataElement": "d6RFFVvuQDk",
+                        "dataElement": "OZUfNtngt0T",
                         "value": "Rejected"
                     }
                 ]
@@ -535,7 +535,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 status: "ACTIVE",
                 dataValues: [
                     {
-                        "dataElement": "cHUxAHazWgx",
+                        "dataElement": "CCNnr8s3rgE",
                         "value": reason
                     }
                 ]
