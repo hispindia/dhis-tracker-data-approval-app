@@ -61,6 +61,7 @@
                 <button type="button" class="btn btn-primary center-block" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();"
                     ng-disabled="!selectedProgram">{{'fetch_records'| translate}}</button>
             </div>
+            <div id="excel_export" ng-show="show"><button ng-click="exportExcel()">Excel Export</button></div><br>
 
         </div>
 

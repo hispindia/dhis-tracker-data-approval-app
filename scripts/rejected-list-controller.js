@@ -240,6 +240,17 @@ dataApprovalApp.controller('RejectedListController', function ($rootScope,
                 }
             })
         })
+        $scope.show = true;
+    }
+
+    $scope.exportExcel = function() {
+        var a = document.createElement('a');
+        var data_type = 'data:application/vnd.ms-excel';
+        var table_div = document.getElementById('tableid');
+        var table_html = table_div.outerHTML.replace(/ /g, '%20');
+        a.href = data_type + ', ' + table_html;
+        a.download = 'Rejected List.xls';
+        a.click();
     }
 
     function showLoad() {// alert( "inside showload method 1" );
