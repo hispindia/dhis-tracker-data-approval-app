@@ -27,6 +27,10 @@ var dataApprovalApp = angular.module('dataApprovalApp',['ui.bootstrap',
             templateUrl:'views/approved-list.html',
             controller: 'ApprovedListController'
 
+        }).when('/audit-report', {
+            templateUrl:'views/audit-report.html',
+            controller: 'AuditReportController'
+
         }).when('/rejected-list', {
             templateUrl:'views/rejected-list.html',
             controller: 'RejectedListController'

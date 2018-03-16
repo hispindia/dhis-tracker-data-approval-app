@@ -49,7 +49,7 @@ dataApprovalApp.controller('RejectedListController', function ($rootScope,
                 $scope.programs = [];
                 $scope.programStages = [];
                 for (var i = 0; i < orgUnit.programs.length; i++) {
-                    if (orgUnit.programs[i].withoutRegistration == false) {
+                    if (orgUnit.programs[i].name == "Gynaecologist - PBR monitoring" || orgUnit.programs[i].name == "Anaesthetist - PBR monitoring" || orgUnit.programs[i].name == "Paediatric - PBR monitoring") {
                         $scope.programs.push(orgUnit.programs[i]);
                     }
                 }

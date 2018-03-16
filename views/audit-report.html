@@ -66,52 +66,7 @@
 
         <div id="divId" class="container" style="margin-left: 2px">
             <table id="tableid" border="1" class="table table-hover">
-                <tr>
-                    <th colspan="{{5}}">{{attribute}}</th>
-                    <th ng-repeat="ps in selectedPS" colspan="{{ps.programStageDataElements.length+3}}">{{ps.name}}</th>
-
-                </tr>
-                <tr style="background-color:rgb(211, 207, 201)">
-                    <!--<th ng-repeat="enrol in enrollment">{{enrol}}</th>-->
-                    <!-- <th ng-repeat="attr in program.programTrackedEntityAttributes">{{attr.displayName}}</th> -->
-                    <th>
-                        {{enrollment}}
-                    </th>
-                    <th>
-                        {{attribute1}}
-                    </th>
-                    <th>
-                        {{attribute2}}
-                    </th>
-                    <th>
-                        {{attribute3}}
-                    </th>
-                    <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
-                </tr>
-
-
-                <tbody>
-                    <tr ng-repeat="event in valuesToDisplay" class="rowClass" ng-style="{'background-color': event.color}">
-                        <td>
-                            {{event.enrollmentDate}}
-                        </td>
-                        <td>
-                            {{event.attributeValues0}}
-                        </td>
-                        <td>
-                            {{event.attributeValues1}}
-                        </td>
-                        <td>
-                            {{event.attributeValues2}}
-                        </td>
-                        <td>
-                            {{event.eventOrgUnitName}}
-                        </td>
-                        <td>
-                            {{event.eventDate}}
-                        </td>
-                        <td ng-repeat="eventValue in event.allEventDataValues track by $index">{{eventValue}}</td>
-                    </tr>
+                <tbody>   
                 </tbody>
 
             </table>

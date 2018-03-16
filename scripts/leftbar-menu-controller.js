@@ -13,5 +13,8 @@ dataApprovalApp.controller('LeftBarMenuController',
                 },
                 $scope.rejectedList = function () {
                         $location.path('/rejected-list').search();
+                },
+                $scope.auditReport = function () {
+                        $location.path('/audit-report').search();
                 };
         });
