@@ -269,6 +269,17 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     }
                                 })
 
+                                $.ajax({
+                                    type: "GET",
+                                    dataType: "json",
+                                    async: false,
+                                    contentType: "application/json",
+                                    url: '../../me.json',
+                                    success: function (response) {
+                                        $scope.userLoggedIn = response.userCredentials.username;
+                                    }
+                                });
+
                                 var displayingValues = {
                                     currentProgram: $scope.program,
                                     enrollmentDate: $scope.enrollmentDate,
@@ -279,7 +290,8 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     eventDate: $scope.event_Date,
                                     allEventDataValues: $scope.eventDataValues,
                                     eventId: $scope.eventId,
-                                    color: $scope.colorName
+                                    color: $scope.colorName,
+                                    currentUser: $scope.userLoggedIn
                                 }
                                 $scope.valuesToDisplay.push(displayingValues);
                                 console.log($scope.valuesToDisplay);
@@ -293,6 +305,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                 $scope.eventDataValues = [];
                                 $scope.eventId = '';
                                 $scope.colorName = '';
+                                $scope.userLoggedIn = '';
                             }
 
                         }
@@ -381,6 +394,17 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                         }
                                     })
 
+                                    $.ajax({
+                                        type: "GET",
+                                        dataType: "json",
+                                        async: false,
+                                        contentType: "application/json",
+                                        url: '../../me.json',
+                                        success: function (response) {
+                                            $scope.userLoggedIn = response.userCredentials.username;
+                                        }
+                                    });
+
                                     var displayingValues = {
                                         currentProgram: $scope.program,
                                         enrollmentDate: $scope.enrollmentDate,
@@ -391,7 +415,8 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                         eventDate: $scope.event_Date,
                                         allEventDataValues: $scope.eventDataValues,
                                         eventId: $scope.eventId,
-                                        color: $scope.colorName
+                                        color: $scope.colorName,
+                                        currentUser: $scope.userLoggedIn
                                     }
                                     $scope.valuesToDisplay.push(displayingValues);
                                     console.log($scope.valuesToDisplay);
@@ -405,6 +430,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     $scope.eventDataValues = [];
                                     $scope.eventId = '';
                                     $scope.colorName = '';
+                                    $scope.userLoggedIn = '';
                                 }
 
                             }
@@ -420,9 +446,10 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
         $scope.appr_reject = appr_reject1.target.innerHTML;
         var blankreason = "";
         if ($scope.appr_reject == 'Approve') {
+            var user = eventData.currentUser;
             var retVal = confirm("Are you sure want to Approve (Name: " + eventData.attributeValues0 + ", Event Date: " + eventData.eventDate + ") ?");
             if (retVal == true) {
-                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, blankreason);
+                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, blankreason,user);
                 return true;
             }
             else {
@@ -430,12 +457,13 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
             }
         }
         else if ($scope.appr_reject == 'Reject') {
+            var user = eventData.currentUser;
             var retVal = prompt("Why do you want to Reject? (Name: " + eventData.attributeValues0 + ", Event Date: " + eventData.eventDate + "), Specify the reason:"), pattern="^(?:(\w)(?!\1\1))+$";
             if (retVal === "") {
                 alert('Unable to Reject, Reason required!');
                 return false;
             } else if (retVal) {
-                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, retVal);
+                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, retVal,user);
                 return true;
             } else {
                 return false;
@@ -443,7 +471,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
         }
     };
 
-    $scope.pushDataelementValue = function (appr_reject1, eventId1, getProgram, reason) {
+    $scope.pushDataelementValue = function (appr_reject1, eventId1, getProgram, reason,user) {
 
         $scope.appr_reject = appr_reject1.target.innerHTML;
 
@@ -465,7 +493,6 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
                 success: function (response) {
                     console.log("Event updated with Approved status:" + eventId1);
-                    $scope.generateReport(getProgram);
                 },
                 error: function (response) {
                     console.log("Event not updated with Approved status:" + eventId1);
@@ -481,6 +508,32 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                     {
                         "dataElement": "CCNnr8s3rgE",
                         "value": ""
+                    }
+                ]
+            };
+            $.ajax({
+                type: "PUT",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(event),
+                url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
+                success: function (response) {
+                    console.log("Event updated with Approved status:" + eventId1);;
+                },
+                error: function (response) {
+                    console.log("Event not updated with Approved status:" + eventId1);
+                },
+                warning: function (response) {
+                    console.log("Warning!:" + eventId1);
+                }
+            });
+
+            var event = {
+                status: "COMPLETED",
+                dataValues: [
+                    {
+                        "dataElement": "BAR55HKpcmE",
+                        "value": user
                     }
                 ]
             };
@@ -521,7 +574,6 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
                 success: function (response) {
                     console.log("Event updated with Rejected status:" + eventId1);
-                    $scope.generateReport(getProgram);
                 },
                 error: function (response) {
                     console.log("Event not updated with Rejected status:" + eventId1);
@@ -548,10 +600,36 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
                 success: function (response) {
                     console.log("Event updated with Rejected status:" + eventId1);
-                    $scope.generateReport(getProgram);
                 },
                 error: function (response) {
                     console.log("Event not updated with Rejected status:" + eventId1);
+                },
+                warning: function (response) {
+                    console.log("Warning!:" + eventId1);
+                }
+            });
+
+            var event = {
+                status: "ACTIVE",
+                dataValues: [
+                    {
+                        "dataElement": "BAR55HKpcmE",
+                        "value": user
+                    }
+                ]
+            };
+            $.ajax({
+                type: "PUT",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(event),
+                url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
+                success: function (response) {
+                    console.log("Event updated with Approved status:" + eventId1);
+                    $scope.generateReport(getProgram);
+                },
+                error: function (response) {
+                    console.log("Event not updated with Approved status:" + eventId1);
                 },
                 warning: function (response) {
                     console.log("Warning!:" + eventId1);

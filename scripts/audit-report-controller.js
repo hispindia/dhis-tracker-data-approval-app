@@ -87,14 +87,9 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
     };
 
     $scope.fnExcelReport = function () {
-
-        //   var blob = new Blob([document.getElementById('divId').innerHTML], {
-        //        type: 'text/plain;charset=utf-8'
-        //      });
-        //        saveAs(blob, "Report.xls");
-        $("#divId").tableExport({
-            formats: ["xlsx", "xls"],
-            filename: "Report"
+        $("#tableid").tableExport({
+           // formats: ["xlsx", "xls"],
+            filename: "Audit Report"
         });
     };
 
@@ -109,10 +104,8 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
             $("#tableid").empty();
             $scope.program = program;
 
-        var newdata = [];
-        var devent =[];
-        var teiValues = [];
-        var currentStatus = [];
+        var final=[];
+        var devent =[];  
        /* $.ajax({
             async : false,
             type: "GET",
@@ -151,7 +144,7 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
     $.ajax({
         async : false,
         type: "GET",
-        url: "../../audits/trackedEntityDataValue.json?de=OZUfNtngt0T&de=CCNnr8s3rgE&skipPaging=true",
+        url: "../../audits/trackedEntityDataValue.json?fields=:all,!auditType,!value&de=OZUfNtngt0T&de=CCNnr8s3rgE&de=BAR55HKpcmE&skipPaging=true",
         success: function(data2){
             getOrgUnit($scope.selectedOrgUnit.id);		
             for (var k = 0; k < data2.trackedEntityDataValueAudits.length; k++) {
@@ -170,14 +163,18 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
                               if(orgunit.indexOf(evorgunit) >-1 && prgrm == $scope.selectedProgramID && prgrmstge == $scope.selectedPSID &&
                                  eventDate >= $scope.startdateSelected && eventDate <= $scope.enddateSelected) 
                                  {
-                                    for(var j=0;j<data1.dataValues.length;j++) {
-                                        if(data1.dataValues[j].dataElement == 'OZUfNtngt0T')
-                                        {
-                                            currentStatus.push(data1.dataValues[j].value);
-                                        }
-                                    }
-                                var tei = data1.trackedEntityInstance;
-                                newdata.push(data2.trackedEntityDataValueAudits[k]);
+                                   
+                            var tei = data1.trackedEntityInstance;
+                            var heirarchyLevel = getheirarchy(evorgunit);
+                            var elemntname = data2.trackedEntityDataValueAudits[k].dataElement.id;
+                            var Delemnt = getDataElement(elemntname);
+                              for(var j=0;j<data1.dataValues.length;j++) {
+                                if(data1.dataValues[j].dataElement === elemntname)
+                                {
+                                   var currentStatus = data1.dataValues[j].value;                                      
+                                }
+                              }
+                                
                                 $.ajax({
                                     async : false,
                                     type: "GET",
@@ -194,20 +191,26 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
                                                 id = data.attributes[z].value;
                                               }                                      
                                             }
-                                            teiValues.push({Name : name,Id : id });
-                                       // }
                                     }
                                 });
+
+                              if(currentStatus == undefined){
+                                currentStatus= "";
+                              }  
+                            final.push({heirarchyLevel:heirarchyLevel,Name : name,Id : id,currentStatus :currentStatus,Name : name,Id : id ,created: data2.trackedEntityDataValueAudits[k].created, modifiedBy: data2.trackedEntityDataValueAudits[k].modifiedBy, Delemnt:Delemnt  });
                             }
                          //   }
                     }
                    }); 
+                   
             }
-            console.log(teiValues);
+            console.log(final);
     }
    });
+
+
     
-            if(newdata.length==0)
+            if(final.length==0)
             {
                 var row2 = $(
                     "<tr style='text-align: left;' ><td colspan='1' style='font-size: 20px;background-color: white; height:100px ;color: black;font-weight: bold '>No Data Found</td></tr>");
@@ -215,45 +218,34 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
     
             }
             else {
-                //console.log(newdata.length);
+            
                 var rowm = $(
-                    "<tr><th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Name of Fee for Service specialist" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
+                    "<tr style='width:200px'><th colspan='7' style='border:1px solid black;background-color: #aeb0b0;height:30px;width:100px;color: white;text-align:center;font-weight: bold'>" + $scope.program.name+ "</th></tr>" +
+                    "<tr><th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Org Unit Path" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
+                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Name of Fee for Service specialist" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Manav sampada ID" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Updated" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Modified By" + "&nbsp;&nbsp;&nbsp;<span  style='color: #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
-                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Audit Type" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right ;text-decoration: none;font-weight: normal;'></span></th>" +
-                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Value" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Data Element" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Current Status" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "</tr>"
                 );
                 $("#tableid").append(rowm);
-    
-                var rown = $(
-                    "<tbody>");
-                $("#tableid").append(rown);
-    
-    
-                for (var j = 0; j < newdata.length; j++) {
-                    var elemntname = newdata[j].dataElement.id;
-                    var Delemnt = getDataElement(elemntname);
+
+                for (var j = 0; j < final.length; j++) {
     
                     var rowf = $(
-                        "<tr><td  style='border:1px solid black;'> " + teiValues[j].Name +
-                        "</td><td  style='border:1px solid black;'> " + teiValues[j].Id +//
-                        "</td><td  style='border:1px solid black;'> " + newdata[j].created +//
-                        "</td><td  style='border:1px solid black;'> " + newdata[j].modifiedBy +//
-                        "</td><td  style='border:1px solid black;'>" + newdata[j].auditType +//////
-                        "</td><td  style='border:1px solid black;'>" + newdata[j].value +
-                        "</td><td  style='border:1px solid black;'>" + Delemnt +
-                        "</td><td  style='border:1px solid black;'>" + currentStatus[j] +
+                        "<tr style='width:200px'><td  style='border:1px solid black;'> " + final[j].heirarchyLevel +
+                        "<td  style='border:1px solid black;'> " + final[j].Name +
+                        "</td><td  style='border:1px solid black;'> " + final[j].Id +
+                        "</td><td  style='border:1px solid black;'> " + final[j].created +
+                        "</td><td  style='border:1px solid black;'> " + final[j].modifiedBy +
+                        "</td><td  style='border:1px solid black;'>" + final[j].Delemnt +
+                        "</td><td  style='border:1px solid black;'>" + final[j].currentStatus +
                         "</td></tr>");
                     $("#tableid").append(rowf);
             }
             }
-            var rown1 = $(
-                "</tbody>");
-            $("#tableid").append(rown1);
         })      
         $scope.show = true;
     };
@@ -286,7 +278,65 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
         });
         return orgunit
     }
-    
+
+    getheirarchy=function(org){
+        $scope.hierarchy="";
+        var myMap=[];
+        var parent=""
+        
+    $.ajax({
+        async : false,
+        type: "GET",
+        url: "../../organisationUnits/"+ org +".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
+        success: function(data){
+        if(data.level==2)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        }
+        if(data.level==3)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        }
+        if(data.level==4)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        }
+        if(data.level==5)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.name)
+        }
+        if(data.level==6)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.parent.name)
+        }
+        // $scope.programs.push({name:"",id:""});
+      }
+        });
+
+        for(var i=myMap.length-1;i>=0;i--)
+        {
+        $scope.hierarchy+=myMap[i]+"/";
+        }
+      
+        return $scope.hierarchy;
+     }
+            
+
      $scope.exportExcel = function() {
         var a = document.createElement('a');
         var data_type = 'data:application/vnd.ms-excel';
