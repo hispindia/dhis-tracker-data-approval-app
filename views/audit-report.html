@@ -58,12 +58,13 @@
             </table>
 
             <div class="col-md-12 trim">
-                <button type="button" class="btn btn-primary center-block" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();"
+                <button type="button" class="btn btn-primary center-block" ng-click="presubmitData(selectedProgram, report, selectedOuMode);showLoad();"
                     ng-disabled="!selectedProgram">{{'fetch_records'| translate}}</button>
             </div>
             <div id="excel_export" ng-show="show"><button ng-click="exportExcel()">Excel Export</button></div><br>
         </div>
 
+        <div class="loading" id="loader">Loading&#8230;</div>
         <div id="divId" class="container" style="margin-left: 2px">
             <table id="tableid" border="1" class="table table-hover">
                 <tbody>   

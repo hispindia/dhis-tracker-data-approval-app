@@ -35,6 +35,10 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
     //initially load tree
     selection.load();
 
+    $timeout(function () {
+        $('#loader').hide();
+    },1000);
+
     // Listen for OU changes
     selection.setListenerFunction(function () {
         $scope.selectedOrgUnitUid = selection.getSelected();
@@ -104,6 +108,13 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
 
     }
 
+    $scope.presubmitData = function (program) {
+        $timeout(function () {
+            $('#loader').show();
+            $scope.generateReport(program);
+          }, 1000);
+    }
+
     $scope.generateReport = function (program) {
         $timeout(function () {
             $scope.program = program;
@@ -117,13 +128,11 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
             $scope.psDEs = [];
             $scope.Options = [];
             $scope.attribute = "Attributes";
-            $scope.attributeValues = ['', '', ''];
+            $scope.attributeValues = [''];
             $scope.numberOfEvents = [];
             $scope.attribute1 = "Name of \"Fee for Service\" specialist";
-            $scope.attribute2 = "Manav sampada ID(EHRMS id)";
-            $scope.attribute3 = "Contact number";
-            $scope.approved_reject = "Approved/Rejected";
-            $scope.enrollment = "Enrollment date";
+            $scope.approved_reject = "Approved/Rejected";      
+            $scope.event_date = "Event Date";
             var options = [];
             $scope.eventDataValues = [];
             $scope.valuesToDisplay = [];
@@ -134,7 +143,6 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
 
                 var psuid = $scope.selectedPS[i].id;
                 $scope.psDEs.push({ dataElement: { id: "orgUnit", name: "orgUnit", ps: psuid } });
-                $scope.psDEs.push({ dataElement: { id: "eventDate", name: "eventDate", ps: psuid } });
 
                 for (var j = 0; j < $scope.selectedPS[i].programStageDataElements.length; j++) {
 
@@ -147,7 +155,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
             $.ajax({
                 async: false,
                 type: "GET",
-                url: "../../events.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&skipPaging=true",
+                url: "../../events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&skipPaging=true",
                 success: function (response) {
                     $scope.existingEvents = [];
                     $scope.numberOfEvents.push(response.events.length);
@@ -157,6 +165,8 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                         $scope.eventId = response.events[j].event;
                         $scope.eventDV = response.events[j].dataValues;
                         $scope.eventOrgUnit = response.events[j].orgUnitName;
+                        $scope.eventOrgUnitId = response.events[j].orgUnit;                                                           
+                        var heirarchyLevel = getheirarchy($scope.eventOrgUnitId);
                         for (var a = 0; a < $scope.eventDV.length; a++) {
                             if ($scope.eventDV[a].value == 'Approved' || $scope.eventDV[a].value == 'Auto-Approved') {
 
@@ -166,9 +176,6 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                                 else if ($scope.eventDV[a].value == 'Auto-Approved') {
                                     $scope.colorName = "#f1ee9f";
                                 }
-                                // else if ($scope.eventDV[a].value == 'Rejected') {
-                                //     $scope.colorName = "rgba(210, 85, 85, 0.85)";
-                                // }
 
                                 if (response.events[j].eventDate) {
                                     $scope.event_Date1 = response.events[j].eventDate;
@@ -176,12 +183,12 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                                 }
 
                                 if ($scope.eventDV.length != 0) {
-                                    for (var z = 2; z < $scope.psDEs.length; z++) {
+                                    for (var z = 1; z < $scope.psDEs.length; z++) {
                                         $scope.eventDataValues.push(eventLoop($scope.psDEs[z].dataElement.id));
                                     }
                                 }
                                 else {
-                                    for (var z = 2; z < $scope.psDEs.length; z++) {
+                                    for (var z = 1; z < $scope.psDEs.length; z++) {
                                         $scope.eventDataValues.push("");
                                     }
                                 }
@@ -208,23 +215,14 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                                             if (response1.attributes[k].displayName == 'Name of "Fee for Service" specialist') {
                                                 $scope.attributeValues[0] = response1.attributes[k].value;
                                             }
-                                            if (response1.attributes[k].displayName == 'Manav sampada ID(EHRMS id)') {
-                                                $scope.attributeValues[1] = response1.attributes[k].value;
-                                            }
-                                            if (response1.attributes[k].displayName == 'Contact number') {
-                                                $scope.attributeValues[2] = response1.attributes[k].value;
-                                            }
                                         }
                                     }
                                 })
 
                                 var displayingValues = {
                                     currentProgram: $scope.program,
-                                    enrollmentDate: $scope.enrollmentDate,
                                     attributeValues0: $scope.attributeValues[0],
-                                    attributeValues1: $scope.attributeValues[1],
-                                    attributeValues2: $scope.attributeValues[2],
-                                    eventOrgUnitName: $scope.eventOrgUnit,
+                                    eventOrgUnitName: heirarchyLevel,
                                     eventDate: $scope.event_Date,
                                     allEventDataValues: $scope.eventDataValues,
                                     eventId: $scope.eventId,
@@ -232,11 +230,8 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                                 }
                                 $scope.valuesToDisplay.push(displayingValues);
                                 console.log($scope.valuesToDisplay);
-                                $scope.enrollmentDate = '';
                                 $scope.program = '';
                                 $scope.attributeValues[0] = '';
-                                $scope.attributeValues[1] = '';
-                                $scope.attributeValues[2] = '';
                                 $scope.eventOrgUnit = '';
                                 $scope.event_Date = '';
                                 $scope.eventDataValues = [];
@@ -248,9 +243,67 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                     }
                 }
             })
-        })
+            $('#loader').hide();
+        });
         $scope.show = true;
     }
+
+    getheirarchy = function(org){
+        $scope.hierarchy="";
+        var myMap=[];
+        var parent=""
+        
+    $.ajax({
+        async : false,
+        type: "GET",
+        url: "../../organisationUnits/"+ org +".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
+        success: function(data){
+        if(data.level==2)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        }
+        if(data.level==3)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        }
+        if(data.level==4)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        }
+        if(data.level==5)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.name)
+        }
+        if(data.level==6)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.parent.name)
+        }
+        // $scope.programs.push({name:"",id:""});
+      }
+        });
+
+        for(var i=myMap.length-1;i>=0;i--)
+        {
+        $scope.hierarchy+=myMap[i]+"/";
+        }
+      
+        return $scope.hierarchy;
+     }
     
      $scope.exportExcel = function() {
         var a = document.createElement('a');

@@ -25,7 +25,9 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
 
     jQuery(document).ready(function () {
         hideLoad();
-    })
+    });
+
+
     $timeout(function () {
         $scope.date = {};
         $scope.date.startDate = new Date();
@@ -35,10 +37,14 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
     //initially load tree
     selection.load();
 
+    $timeout(function () {
+        $('#loader').hide();
+    },1000);
+
     // Listen for OU changes
     selection.setListenerFunction(function () {
         $scope.selectedOrgUnitUid = selection.getSelected();
-        loadPrograms();
+        loadPrograms();  
     }, false);
 
     loadPrograms = function () {
@@ -107,7 +113,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
         $.ajax({
             async: false,
             type: "GET",
-            url: "../../events.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&skipPaging=true",
+            url: "../../events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&skipPaging=true",
             success: function (response) {
 
                 for (var k = 0; k < response.events.length; k++) {
@@ -150,7 +156,10 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                         }
                     }
                 }
-                $scope.generateReport(program);
+                $timeout(function () {
+                    $('#loader').show();
+                    $scope.generateReport(program);
+                  },1000);
             }
         })
     }
@@ -168,13 +177,11 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
             $scope.psDEs = [];
             $scope.Options = [];
             $scope.attribute = "Attributes";
-            $scope.attributeValues = ['', '', ''];
+            $scope.attributeValues = [''];
             $scope.numberOfEvents = [];
             $scope.attribute1 = "Name of \"Fee for Service\" specialist";
-            $scope.attribute2 = "Manav sampada ID(EHRMS id)";
-            $scope.attribute3 = "Contact number";
             $scope.approved_reject = "Approve/Reject";
-            $scope.enrollment = "Enrollment date";
+            $scope.event_date = "Event Date";
             var options = [];
             $scope.eventDataValues = [];
             $scope.valuesToDisplay = [];
@@ -185,7 +192,6 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
 
                 var psuid = $scope.selectedPS[i].id;
                 $scope.psDEs.push({ dataElement: { id: "orgUnit", name: "orgUnit", ps: psuid } });
-                $scope.psDEs.push({ dataElement: { id: "eventDate", name: "eventDate", ps: psuid } });
 
                 for (var j = 0; j < $scope.selectedPS[i].programStageDataElements.length; j++) {
 
@@ -198,7 +204,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 $.ajax({
                     async: false,
                     type: "GET",
-                    url: "../../events.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&skipPaging=true",
+                    url: "../../events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&skipPaging=true",
                     success: function (response) {
 
                         $scope.existingEvents = [];
@@ -208,16 +214,16 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                             if (response.events[j].status === "COMPLETED") {
                                 $scope.tei = response.events[j].trackedEntityInstance;
                                 $scope.eventId = response.events[j].event;
-                                $scope.eventDV = response.events[j].dataValues;
-                                $scope.eventOrgUnit = response.events[j].orgUnitName;
+                                $scope.eventDV = response.events[j].dataValues;                              
+                                $scope.ifApproved = $scope.checkApproved($scope.eventDV);
+                                if($scope.ifApproved == true){
+                                }
+                                else{
+                                $scope.eventOrgUnit = response.events[j].orgUnitName; 
+                                $scope.eventOrgUnitId = response.events[j].orgUnit;                                                           
+                                var heirarchyLevel = getheirarchy($scope.eventOrgUnitId);
                                 for (var a = 0; a < $scope.eventDV.length; a++) {
-                                    if ($scope.eventDV[a].value == 'Approved') {
-                                        $scope.colorName = "rgb(106, 199, 106)";
-                                    }
-                                    else if ($scope.eventDV[a].value == 'Auto-Approved') {
-                                        $scope.colorName = "#f1ee9f";
-                                    }
-                                    else if ($scope.eventDV[a].value == 'Re-submitted') {
+                                     if ($scope.eventDV[a].value == 'Re-submitted') {
                                         $scope.colorName = "rgba(210, 85, 85, 0.85)";
                                     }
                                 }
@@ -227,12 +233,12 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                 }
 
                                 if ($scope.eventDV.length != 0) {
-                                    for (var z = 2; z < $scope.psDEs.length; z++) {
+                                    for (var z = 1; z < $scope.psDEs.length; z++) {
                                         $scope.eventDataValues.push(eventLoop($scope.psDEs[z].dataElement.id));
                                     }
                                 }
                                 else {
-                                    for (var z = 2; z < $scope.psDEs.length; z++) {
+                                    for (var z = 1; z < $scope.psDEs.length; z++) {
                                         $scope.eventDataValues.push("");
                                     }
                                 }
@@ -253,61 +259,34 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     type: "GET",
                                     url: "../../trackedEntityInstances/" + $scope.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value]&ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTSprogram=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&skipPaging=true",
                                     success: function (response1) {
-                                        $scope.enrollmentDate1 = response1.created;
-                                        $scope.enrollmentDate = $scope.enrollmentDate1.split(" ")[0];
                                         for (var k = 0; k < response1.attributes.length; k++) {
                                             if (response1.attributes[k].displayName == 'Name of "Fee for Service" specialist') {
                                                 $scope.attributeValues[0] = response1.attributes[k].value;
-                                            }
-                                            if (response1.attributes[k].displayName == 'Manav sampada ID(EHRMS id)') {
-                                                $scope.attributeValues[1] = response1.attributes[k].value;
-                                            }
-                                            if (response1.attributes[k].displayName == 'Contact number') {
-                                                $scope.attributeValues[2] = response1.attributes[k].value;
                                             }
                                         }
                                     }
                                 })
 
-                                $.ajax({
-                                    type: "GET",
-                                    dataType: "json",
-                                    async: false,
-                                    contentType: "application/json",
-                                    url: '../../me.json',
-                                    success: function (response) {
-                                        $scope.userLoggedIn = response.userCredentials.username;
-                                    }
-                                });
-
                                 var displayingValues = {
                                     currentProgram: $scope.program,
-                                    enrollmentDate: $scope.enrollmentDate,
                                     attributeValues0: $scope.attributeValues[0],
-                                    attributeValues1: $scope.attributeValues[1],
-                                    attributeValues2: $scope.attributeValues[2],
-                                    eventOrgUnitName: $scope.eventOrgUnit,
+                                    eventOrgUnitName: heirarchyLevel,
                                     eventDate: $scope.event_Date,
                                     allEventDataValues: $scope.eventDataValues,
                                     eventId: $scope.eventId,
                                     color: $scope.colorName,
-                                    currentUser: $scope.userLoggedIn
                                 }
                                 $scope.valuesToDisplay.push(displayingValues);
                                 console.log($scope.valuesToDisplay);
-                                $scope.enrollmentDate = '';
                                 $scope.program = '';
                                 $scope.attributeValues[0] = '';
-                                $scope.attributeValues[1] = '';
-                                $scope.attributeValues[2] = '';
                                 $scope.eventOrgUnit = '';
                                 $scope.event_Date = '';
                                 $scope.eventDataValues = [];
                                 $scope.eventId = '';
                                 $scope.colorName = '';
-                                $scope.userLoggedIn = '';
                             }
-
+                        }
                         }
                     }
                 })
@@ -323,7 +302,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                     $.ajax({
                         async: false,
                         type: "GET",
-                        url: "../../events.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&skipPaging=true",
+                        url: "../../events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&skipPaging=true",
                         success: function (response) {
 
                             $scope.existingEvents = [];
@@ -334,15 +313,15 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     $scope.tei = response.events[j].trackedEntityInstance;
                                     $scope.eventId = response.events[j].event;
                                     $scope.eventDV = response.events[j].dataValues;
-                                    $scope.eventOrgUnit = response.events[j].orgUnitName;
+                                    $scope.ifApproved = $scope.checkApproved($scope.eventDV);
+                                    if($scope.ifApproved == true){
+                                    }
+                                    else{
+                                    $scope.eventOrgUnit = response.events[j].orgUnitName;                                
+                                    $scope.eventOrgUnitId = response.events[j].orgUnit;                                                           
+                                   var heirarchyLevel = getheirarchy($scope.eventOrgUnitId);
                                     for (var a = 0; a < $scope.eventDV.length; a++) {
-                                        if ($scope.eventDV[a].value == 'Approved') {
-                                            $scope.colorName = "rgb(106, 199, 106)";
-                                        }
-                                        else if ($scope.eventDV[a].value == 'Auto-Approved') {
-                                            $scope.colorName = "#f1ee9f";
-                                        }
-                                        else if ($scope.eventDV[a].value == 'Re-submitted') {
+                                         if ($scope.eventDV[a].value == 'Re-submitted') {
                                             $scope.colorName = "rgba(210, 85, 85, 0.85)";
                                         }
                                     }
@@ -352,12 +331,12 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                     }
 
                                     if ($scope.eventDV.length != 0) {
-                                        for (var z = 2; z < $scope.psDEs.length; z++) {
+                                        for (var z = 1; z < $scope.psDEs.length; z++) {
                                             $scope.eventDataValues.push(eventLoop($scope.psDEs[z].dataElement.id));
                                         }
                                     }
                                     else {
-                                        for (var z = 2; z < $scope.psDEs.length; z++) {
+                                        for (var z = 1; z < $scope.psDEs.length; z++) {
                                             $scope.eventDataValues.push("");
                                         }
                                     }
@@ -378,67 +357,49 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                                         type: "GET",
                                         url: "../../trackedEntityInstances/" + $scope.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value]&ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTSprogram=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&skipPaging=true",
                                         success: function (response1) {
-                                            $scope.enrollmentDate1 = response1.created;
-                                            $scope.enrollmentDate = $scope.enrollmentDate1.split(" ")[0];
                                             for (var k = 0; k < response1.attributes.length; k++) {
                                                 if (response1.attributes[k].displayName == 'Name of "Fee for Service" specialist') {
                                                     $scope.attributeValues[0] = response1.attributes[k].value;
                                                 }
-                                                if (response1.attributes[k].displayName == 'Manav sampada ID(EHRMS id)') {
-                                                    $scope.attributeValues[1] = response1.attributes[k].value;
-                                                }
-                                                if (response1.attributes[k].displayName == 'Contact number') {
-                                                    $scope.attributeValues[2] = response1.attributes[k].value;
-                                                }
                                             }
-                                        }
-                                    })
-
-                                    $.ajax({
-                                        type: "GET",
-                                        dataType: "json",
-                                        async: false,
-                                        contentType: "application/json",
-                                        url: '../../me.json',
-                                        success: function (response) {
-                                            $scope.userLoggedIn = response.userCredentials.username;
                                         }
                                     });
 
                                     var displayingValues = {
                                         currentProgram: $scope.program,
-                                        enrollmentDate: $scope.enrollmentDate,
                                         attributeValues0: $scope.attributeValues[0],
-                                        attributeValues1: $scope.attributeValues[1],
-                                        attributeValues2: $scope.attributeValues[2],
-                                        eventOrgUnitName: $scope.eventOrgUnit,
+                                        eventOrgUnitName: heirarchyLevel,
                                         eventDate: $scope.event_Date,
                                         allEventDataValues: $scope.eventDataValues,
                                         eventId: $scope.eventId,
                                         color: $scope.colorName,
-                                        currentUser: $scope.userLoggedIn
                                     }
                                     $scope.valuesToDisplay.push(displayingValues);
                                     console.log($scope.valuesToDisplay);
-                                    $scope.enrollmentDate = '';
                                     $scope.program = '';
                                     $scope.attributeValues[0] = '';
-                                    $scope.attributeValues[1] = '';
-                                    $scope.attributeValues[2] = '';
                                     $scope.eventOrgUnit = '';
                                     $scope.event_Date = '';
                                     $scope.eventDataValues = [];
                                     $scope.eventId = '';
                                     $scope.colorName = '';
-                                    $scope.userLoggedIn = '';
                                 }
-
                             }
+                          }
                         }
                     })
                 }
             }
+            $('#loader').hide();   
         })
+    }
+
+    $scope.checkApproved = function(eventDV){
+        for (var a = 0; a < eventDV.length; a++) {
+            if ($scope.eventDV[a].value == 'Approved' || $scope.eventDV[a].value == 'Auto-Approved') {
+                return true;
+            }
+        }
     }
 
     $scope.confirmPush = function (appr_reject1, eventId1, getProgram, eventData) {
@@ -446,10 +407,9 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
         $scope.appr_reject = appr_reject1.target.innerHTML;
         var blankreason = "";
         if ($scope.appr_reject == 'Approve') {
-            var user = eventData.currentUser;
             var retVal = confirm("Are you sure want to Approve (Name: " + eventData.attributeValues0 + ", Event Date: " + eventData.eventDate + ") ?");
             if (retVal == true) {
-                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, blankreason,user);
+                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, blankreason);
                 return true;
             }
             else {
@@ -457,13 +417,12 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
             }
         }
         else if ($scope.appr_reject == 'Reject') {
-            var user = eventData.currentUser;
             var retVal = prompt("Why do you want to Reject? (Name: " + eventData.attributeValues0 + ", Event Date: " + eventData.eventDate + "), Specify the reason:"), pattern="^(?:(\w)(?!\1\1))+$";
             if (retVal === "") {
                 alert('Unable to Reject, Reason required!');
                 return false;
             } else if (retVal) {
-                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, retVal,user);
+                $scope.pushDataelementValue(appr_reject1, eventId1, getProgram, retVal);
                 return true;
             } else {
                 return false;
@@ -471,7 +430,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
         }
     };
 
-    $scope.pushDataelementValue = function (appr_reject1, eventId1, getProgram, reason,user) {
+    $scope.pushDataelementValue = function (appr_reject1, eventId1, getProgram, reason) {
 
         $scope.appr_reject = appr_reject1.target.innerHTML;
 
@@ -518,7 +477,8 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 data: JSON.stringify(event),
                 url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
                 success: function (response) {
-                    console.log("Event updated with Approved status:" + eventId1);;
+                    console.log("Event updated with Approved status:" + eventId1);
+                    $scope.resubmitData(getProgram);
                 },
                 error: function (response) {
                     console.log("Event not updated with Approved status:" + eventId1);
@@ -528,32 +488,6 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 }
             });
 
-            var event = {
-                status: "COMPLETED",
-                dataValues: [
-                    {
-                        "dataElement": "BAR55HKpcmE",
-                        "value": user
-                    }
-                ]
-            };
-            $.ajax({
-                type: "PUT",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(event),
-                url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
-                success: function (response) {
-                    console.log("Event updated with Approved status:" + eventId1);
-                    $scope.generateReport(getProgram);
-                },
-                error: function (response) {
-                    console.log("Event not updated with Approved status:" + eventId1);
-                },
-                warning: function (response) {
-                    console.log("Warning!:" + eventId1);
-                }
-            });
         }
         else if ($scope.appr_reject == 'Reject') {
 
@@ -600,6 +534,7 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                 url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
                 success: function (response) {
                     console.log("Event updated with Rejected status:" + eventId1);
+                    $scope.resubmitData(getProgram);
                 },
                 error: function (response) {
                     console.log("Event not updated with Rejected status:" + eventId1);
@@ -608,35 +543,65 @@ dataApprovalApp.controller('ApplicationsForApprovalController', function ($rootS
                     console.log("Warning!:" + eventId1);
                 }
             });
-
-            var event = {
-                status: "ACTIVE",
-                dataValues: [
-                    {
-                        "dataElement": "BAR55HKpcmE",
-                        "value": user
-                    }
-                ]
-            };
-            $.ajax({
-                type: "PUT",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(event),
-                url: '../../events/' + eventId1 + '/' + event.dataValues[0].dataElement, event,
-                success: function (response) {
-                    console.log("Event updated with Approved status:" + eventId1);
-                    $scope.generateReport(getProgram);
-                },
-                error: function (response) {
-                    console.log("Event not updated with Approved status:" + eventId1);
-                },
-                warning: function (response) {
-                    console.log("Warning!:" + eventId1);
-                }
-            });
         }
     };
+
+    getheirarchy = function(org){
+        $scope.hierarchy="";
+        var myMap=[];
+        var parent=""
+        
+    $.ajax({
+        async : false,
+        type: "GET",
+        url: "../../organisationUnits/"+ org +".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
+        success: function(data){
+        if(data.level==2)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        }
+        if(data.level==3)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        }
+        if(data.level==4)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        }
+        if(data.level==5)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.name)
+        }
+        if(data.level==6)
+        {
+        myMap.push(data.name);
+        myMap.push(data.parent.name)
+        myMap.push(data.parent.parent.name)
+        myMap.push(data.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.name)
+        myMap.push(data.parent.parent.parent.parent.parent.name)
+        }
+        // $scope.programs.push({name:"",id:""});
+      }
+        });
+
+        for(var i=myMap.length-1;i>=0;i--)
+        {
+        $scope.hierarchy+=myMap[i]+"/";
+        }
+      
+        return $scope.hierarchy;
+     }
 
     function showLoad() {// alert( "inside showload method 1" );
         setTimeout(function () {
