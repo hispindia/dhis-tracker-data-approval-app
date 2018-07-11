@@ -53,7 +53,7 @@ dataApprovalApp.controller('RejectedListController', function ($rootScope,
                 $scope.programs = [];
                 $scope.programStages = [];
                 for (var i = 0; i < orgUnit.programs.length; i++) {
-                    if (orgUnit.programs[i].name == "Gynaecologist - PBR monitoring" || orgUnit.programs[i].name == "Anaesthetist - PBR monitoring" || orgUnit.programs[i].name == "Paediatric - PBR monitoring") {
+                    if (orgUnit.programs[i].name == "Gynaecologist - PBR monitoring" || orgUnit.programs[i].name == "Anaesthetist - PBR monitoring" || orgUnit.programs[i].name == "Paediatric - PBR monitoring" || orgUnit.programs[i].name == "Paediatrician _PICU_ monitoring tool") {
                         $scope.programs.push(orgUnit.programs[i]);
                     }
                 }
