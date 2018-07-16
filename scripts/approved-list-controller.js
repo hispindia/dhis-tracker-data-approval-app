@@ -130,7 +130,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
             $scope.attribute = "Attributes";
             $scope.attributeValues = [''];
             $scope.numberOfEvents = [];
-            $scope.attribute1 = "Name of \"Fee for Service\" specialist";
+            $scope.attribute1 = "Name of Fee for Service specialist";
             $scope.approved_reject = "Approved/Rejected";      
             $scope.event_date = "Event Date";
             var options = [];
@@ -212,7 +212,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                                         $scope.enrollmentDate1 = response1.created;
                                         $scope.enrollmentDate = $scope.enrollmentDate1.split(" ")[0];
                                         for (var k = 0; k < response1.attributes.length; k++) {
-                                            if (response1.attributes[k].displayName == 'Name of "Fee for Service" specialist') {
+                                            if (response1.attributes[k].displayName == 'Name of Fee for Service specialist') {
                                                 $scope.attributeValues[0] = response1.attributes[k].value;
                                             }
                                         }

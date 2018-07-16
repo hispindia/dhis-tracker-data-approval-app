@@ -245,7 +245,7 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
 
     getattribues = function(teilength){
         for(var z=0;z<teilength.attributes.length;z++){
-            if(teilength.attributes[z].displayName == 'Name of \"Fee for Service\" specialist')
+            if(teilength.attributes[z].displayName == 'Name of Fee for Service specialist')
               {
                 $scope.name = teilength.attributes[z].value;
               }
