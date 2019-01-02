@@ -22,7 +22,8 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
     MetadataService) {
 
     $scope.programStages = [];
-
+    document.getElementById("orgUnitTree").style.display="block";
+    
     jQuery(document).ready(function () {
         hideLoad();
     })
@@ -37,7 +38,7 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
 
     $timeout(function () {
         $('#loader').hide();
-    },1000);
+    }, 1000);
 
     // Listen for OU changes
     selection.setListenerFunction(function () {
@@ -53,8 +54,11 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
                 $scope.programs = [];
                 $scope.programStages = [];
                 for (var i = 0; i < orgUnit.programs.length; i++) {
-                    if (orgUnit.programs[i].name == "Gynaecologist - PBR monitoring" || orgUnit.programs[i].name == "Anaesthetist - PBR monitoring" || orgUnit.programs[i].name == "Paediatric - PBR monitoring" || orgUnit.programs[i].name == "Paediatrician _PICU_ monitoring tool") {
-                        $scope.programs.push(orgUnit.programs[i]);
+                    for (var j = 0; j < orgUnit.programs[i].attributeValues.length; j++) {
+                        if (orgUnit.programs[i].attributeValues[j].attribute.code === 'forapproval' && orgUnit.programs[i].attributeValues[j].value === 'true') {
+                            $scope.isValidProgram = true;
+                            $scope.programs.push(orgUnit.programs[i]);
+                        }
                     }
                 }
             });
@@ -92,7 +96,7 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
 
     $scope.fnExcelReport = function () {
         $("#tableid").tableExport({
-           // formats: ["xlsx", "xls"],
+            // formats: ["xlsx", "xls"],
             filename: "Audit Report"
         });
     };
@@ -106,112 +110,110 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
     //MZhphvQXhCK
     $scope.sqlViewData = [];
     $.ajax({
-        async : false,
+        async: false,
         type: "GET",
         url: "../../sqlViews/Yt8jsiVPRer/data.json?skipPaging=true",
-        success: function(data){		
-            $scope.sqlViewData.push(data.rows);
-    }
-   });      
-    
-    
+        success: function (data) {
+            $scope.sqlViewData.push(data.listGrid);
+        }
+    });
+
+
     $scope.presubmitData = function (program) {
         $timeout(function () {
             $('#loader').show();
             $scope.generateReport(program);
-          }, 1000);
+        }, 1000);
     }
 
     $scope.generateReport = function (program) {
         $timeout(function () {
             $("#tableid").empty();
             $scope.program = program;
-            var index =1;
+            var index = 1;
 
-        var final=[];
-        var devent =[];  
+            var final = [];
+            var devent = [];
 
-    $.ajax({
-        async : false,
-        type: "GET",
-        url: "../../trackedEntityInstances.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID +"&skipPaging=true",
-        success: function(data){
-            for(var i=0;i<data.trackedEntityInstances.length;i++)
-            {
-            var ttt=data.trackedEntityInstances[i].trackedEntityInstance;
-                    $.ajax({
-                        async : false,
-                        type: "GET",
-                        url: "../../events.json?trackedEntityInstance="+ttt+"&programStage=" + $scope.selectedPSID+"&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected +"&order=eventDate:DESC&skipPaging=true",
-                        success: function(response){
-                            if(response.events.length != 0){
-                            $scope.eventDV = response.events[0].dataValues;
-                            $scope.eventOrgUnitId = response.events[0].orgUnit;                                                           
-                            $scope.heirarchyLevel = getheirarchy($scope.eventOrgUnitId);
-                            $scope.getAttributes = getattribues(data.trackedEntityInstances[i]);
-                            $scope.pickcount = sqlviewcount(ttt);
-                            for (var a = 0; a < $scope.eventDV.length; a++) {
-                            if ($scope.eventDV[a].dataElement == 'OZUfNtngt0T' || $scope.eventDV[a].dataElement == 'CCNnr8s3rgE') {
+            $.ajax({
+                async: false,
+                type: "GET",
+                url: "../../trackedEntityInstances.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&skipPaging=true",
+                success: function (data) {
+                    for (var i = 0; i < data.trackedEntityInstances.length; i++) {
+                        var ttt = data.trackedEntityInstances[i].trackedEntityInstance;
+                        $.ajax({
+                            async: false,
+                            type: "GET",
+                            url: "../../events.json?trackedEntityInstance=" + ttt + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&order=eventDate:DESC&skipPaging=true",
+                            success: function (response) {
+                                if (response.events.length != 0) {
+                                    $scope.eventDV = response.events[0].dataValues;
+                                    $scope.eventOrgUnitId = response.events[0].orgUnit;
+                                    $scope.heirarchyLevel = getheirarchy($scope.eventOrgUnitId);
+                                    $scope.getAttributes = getattribues(data.trackedEntityInstances[i]);
+                                    $scope.pickcount = sqlviewcount(ttt);
+                                    for (var a = 0; a < $scope.eventDV.length; a++) {
+                                        if ($scope.eventDV[a].dataElement == 'OZUfNtngt0T' || $scope.eventDV[a].dataElement == 'CCNnr8s3rgE') {
 
-                                if ($scope.eventDV[a].dataElement === 'OZUfNtngt0T') {
-                                    $scope.currentStatus = $scope.eventDV[a].value;
-                                    $scope.lastUpdated1 = $scope.eventDV[a].lastUpdated;
-                                    $scope.lastUpdated = $scope.lastUpdated1.split("T")[0];
-                                    $scope.approvedRejectedby = $scope.eventDV[a].storedBy;
+                                            if ($scope.eventDV[a].dataElement === 'OZUfNtngt0T') {
+                                                $scope.currentStatus = $scope.eventDV[a].value;
+                                                $scope.lastUpdated1 = $scope.eventDV[a].lastUpdated;
+                                                $scope.lastUpdated = $scope.lastUpdated1.split("T")[0];
+                                                $scope.approvedRejectedby = $scope.eventDV[a].storedBy;
+                                            }
+                                            if ($scope.eventDV[a].dataElement === 'CCNnr8s3rgE') {
+                                                $scope.reasonForrejection = $scope.eventDV[a].value;
+                                            }
+
+                                        }
                                     }
-                                if($scope.eventDV[a].dataElement === 'CCNnr8s3rgE'){
-                                    $scope.reasonForrejection = $scope.eventDV[a].value;
-                                    }
 
-                        }
+                                    if ($scope.currentStatus == undefined || $scope.currentStatus == "") {
+                                    }
+                                    else {
+                                        if ($scope.pickcount == undefined) {
+                                            $scope.pickcount = "";
+                                        }
+                                        if ($scope.reasonForrejection == undefined) {
+                                            $scope.reasonForrejection = "";
+                                        }
+                                        final.push({ heirarchyLevel: $scope.heirarchyLevel, Name: $scope.getAttributes.name, contact: $scope.getAttributes.contactNumber, count: $scope.pickcount, currentStatus: $scope.currentStatus, lastUpdated: $scope.lastUpdated, modifiedBy: $scope.approvedRejectedby, reason: $scope.reasonForrejection });
+                                        $scope.reasonForrejection = ""; $scope.getAttributes.contactNumber = ""; $scope.getAttributes.name = ""; $scope.approvedRejectedby = ""; $scope.lastUpdated = ""; $scope.currentStatus = ""; $scope.pickcount = "";
+                                    }
+                                }
+                            }
+                        });
                     }
-                     
-                   if( $scope.currentStatus == undefined || $scope.currentStatus == ""){
-                   }
-                   else{
-                    if( $scope.pickcount == undefined){
-                        $scope.pickcount = "";
-                    }
-                    if($scope.reasonForrejection == undefined){
-                        $scope.reasonForrejection = "";
-                    }
-                   final.push({heirarchyLevel:$scope.heirarchyLevel,Name : $scope.getAttributes.name,contact:$scope.getAttributes.contactNumber,count: $scope.pickcount,currentStatus :$scope.currentStatus,lastUpdated: $scope.lastUpdated, modifiedBy: $scope.approvedRejectedby, reason:$scope.reasonForrejection });                 
-                   $scope.reasonForrejection="";$scope.getAttributes.contactNumber="";$scope.getAttributes.name="";$scope.approvedRejectedby="";$scope.lastUpdated="";$scope.currentStatus="";$scope.pickcount="";    
-                        }        
-                    }
+                    console.log(final);
                 }
-            });                    
-        }
-        console.log(final);        
-        }
-    });
+            });
 
-            if(final.length==0)
-            {
+            if (final.length == 0) {
                 var row2 = $(
                     "<tr style='text-align: left;' ><td colspan='1' style='font-size: 20px;background-color: white; height:100px ;color: black;font-weight: bold '>No Data Found</td></tr>");
                 $("#tableid").append(row2);
-    
+
             }
             else {
-            
+
                 var rowm = $(
-                    "<tr style='width:200px'><th colspan='9' style='border:1px solid black;background-color: #aeb0b0;height:30px;width:100px;color: white;text-align:center;font-weight: bold'>" + $scope.program.name+ "</th></tr>" +
+                    "<tr style='width:200px'><th colspan='9' style='border:1px solid black;background-color: #aeb0b0;height:30px;width:100px;color: white;text-align:center;font-weight: bold'>" + $scope.program.name + "</th></tr>" +
                     "<tr><th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >S.no." + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Org Unit Path" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
-                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Name of Fee for Service specialist" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +               
+                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Name of Fee for Service specialist" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Contact Number" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold;position: relative;' >Last Updated" + "&nbsp;&nbsp;&nbsp;<span style='color: #1B4F72;margin-top: -15px;text-align: right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >No of times Rejected" + "&nbsp;&nbsp;&nbsp;<span  style='color: #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Current Status" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
-                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Approved/Rejected By" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +              
+                    "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Approved/Rejected By" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "<th colspan='1' style='border:1px solid black;background-color: #aeb0b0;height:30px   ;color: white;text-align: center;font-weight: bold ' >Reason of rejection" + "&nbsp;&nbsp;&nbsp;<span style='color:  #1B4F72;margin-top: -15px;text-align:right;text-decoration: none;font-weight: normal;'></span></th>" +
                     "</tr>"
                 );
                 $("#tableid").append(rowm);
 
                 for (var j = 0; j < final.length; j++) {
-    
+
                     var rowf = $(
                         "<tr style='width:200px'><td  style='border:1px solid black;'> " + index +
                         "</td><td  style='border:1px solid black;'> " + final[j].heirarchyLevel +
@@ -225,100 +227,93 @@ dataApprovalApp.controller('AuditReportController', function ($rootScope,
                         "</td></tr>");
                     $("#tableid").append(rowf);
                     index++;
-            }
+                }
             }
             $('#loader').hide();
-        })      
+        })
         $scope.show = true;
     };
 
-    sqlviewcount = function(tei){
-        for(var m=0;m<$scope.sqlViewData.length;m++){
-            for(var n=0;n<$scope.sqlViewData[m].length;n++){
-             if(tei === $scope.sqlViewData[m][n][0]) {
-               var count = $scope.sqlViewData[m][n][1]; 
-                  }
-             }                      
-          }
-          return count;
+    sqlviewcount = function (tei) {
+        for (var m = 0; m < $scope.sqlViewData.length; m++) {
+            for (var n = 0; n < $scope.sqlViewData[m].rows.length; n++) {
+                if (tei === $scope.sqlViewData[n][0]) {
+                    var count = $scope.sqlViewData[n][1];
+                }
+            }
+        }
+        return count;
     }
 
-    getattribues = function(teilength){
-        for(var z=0;z<teilength.attributes.length;z++){
-            if(teilength.attributes[z].displayName == 'Name of Fee for Service specialist')
-              {
+    getattribues = function (teilength) {
+        for (var z = 0; z < teilength.attributes.length; z++) {
+            if (teilength.attributes[z].displayName == 'Name of Fee for Service specialist') {
                 $scope.name = teilength.attributes[z].value;
-              }
+            }
             if (teilength.attributes[z].displayName == 'Contact number') {
                 $scope.contactNumber = teilength.attributes[z].value;
-              }                                      
             }
-    
+        }
+
         return {
             name: $scope.name,
             contactNumber: $scope.contactNumber
         };
     }
 
-    getheirarchy=function(org){
-        $scope.hierarchy="";
-        var myMap=[];
-        var parent=""
-        
-    $.ajax({
-        async : false,
-        type: "GET",
-        url: "../../organisationUnits/"+ org +".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
-        success: function(data){
-        if(data.level==2)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        }
-        if(data.level==3)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        }
-        if(data.level==4)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        myMap.push(data.parent.parent.parent.name)
-        }
-        if(data.level==5)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        myMap.push(data.parent.parent.parent.name)
-        myMap.push(data.parent.parent.parent.parent.name)
-        }
-        if(data.level==6)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        myMap.push(data.parent.parent.parent.name)
-        myMap.push(data.parent.parent.parent.parent.name)
-        myMap.push(data.parent.parent.parent.parent.parent.name)
-        }
-        // $scope.programs.push({name:"",id:""});
-      }
+    getheirarchy = function (org) {
+        $scope.hierarchy = "";
+        var myMap = [];
+        var parent = ""
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: "../../organisationUnits/" + org + ".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
+            success: function (data) {
+                if (data.level == 2) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                }
+                if (data.level == 3) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                }
+                if (data.level == 4) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.name)
+                }
+                if (data.level == 5) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.parent.name)
+                }
+                if (data.level == 6) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.parent.parent.name)
+                }
+                // $scope.programs.push({name:"",id:""});
+            }
         });
 
-        for(var i=myMap.length-1;i>=0;i--)
-        {
-        $scope.hierarchy+=myMap[i]+"/";
+        for (var i = myMap.length - 1; i >= 0; i--) {
+            $scope.hierarchy += myMap[i] + "/";
         }
-      
-        return $scope.hierarchy;
-     }
-            
 
-     $scope.exportExcel = function() {
+        return $scope.hierarchy;
+    }
+
+
+    $scope.exportExcel = function () {
         var a = document.createElement('a');
         var data_type = 'data:application/vnd.ms-excel';
         var table_div = document.getElementById('tableid');

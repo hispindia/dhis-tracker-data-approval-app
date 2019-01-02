@@ -22,6 +22,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
     MetadataService) {
 
     $scope.programStages = [];
+    document.getElementById("orgUnitTree").style.display="block";
 
     jQuery(document).ready(function () {
         hideLoad();
@@ -37,7 +38,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
 
     $timeout(function () {
         $('#loader').hide();
-    },1000);
+    }, 1000);
 
     // Listen for OU changes
     selection.setListenerFunction(function () {
@@ -53,8 +54,11 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                 $scope.programs = [];
                 $scope.programStages = [];
                 for (var i = 0; i < orgUnit.programs.length; i++) {
-                    if (orgUnit.programs[i].name == "Gynaecologist - PBR monitoring" || orgUnit.programs[i].name == "Anaesthetist - PBR monitoring" || orgUnit.programs[i].name == "Paediatric - PBR monitoring" || orgUnit.programs[i].name == "Paediatrician _PICU_ monitoring tool") {
-                        $scope.programs.push(orgUnit.programs[i]);
+                    for (var j = 0; j < orgUnit.programs[i].attributeValues.length; j++) {
+                        if (orgUnit.programs[i].attributeValues[j].attribute.code === 'forapproval' && orgUnit.programs[i].attributeValues[j].value === 'true') {
+                            $scope.isValidProgram = true;
+                            $scope.programs.push(orgUnit.programs[i]);
+                        }
                     }
                 }
             });
@@ -112,7 +116,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
         $timeout(function () {
             $('#loader').show();
             $scope.generateReport(program);
-          }, 1000);
+        }, 1000);
     }
 
     $scope.generateReport = function (program) {
@@ -131,7 +135,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
             $scope.attributeValues = [''];
             $scope.numberOfEvents = [];
             $scope.attribute1 = "Name of Fee for Service specialist";
-            $scope.approved_reject = "Approved/Rejected";      
+            $scope.approved_reject = "Approved/Rejected";
             $scope.event_date = "Event Date";
             var options = [];
             $scope.eventDataValues = [];
@@ -152,12 +156,14 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                 }
             }
 
-            $.ajax({
-                async: false,
-                type: "GET",
-                url: "../../events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.selectedProgramID + "&programStage=" + $scope.selectedPSID + "&startDate=" + $scope.startdateSelected + "&endDate=" + $scope.enddateSelected + "&skipPaging=true",
-                success: function (response) {
+            if ($scope.selectedOrgUnit.id === 'SpddBmmfvPr' || $scope.selectedOrgUnit.id === 'v8EzhiynNtf') {
+                alert("Please select Org Unit from below levels ");
+                $('#loader').hide();
+            } else {
+                MetadataService.getEventsWithFilter($scope.selectedOrgUnit.id, $scope.selectedProgramID, $scope.selectedPSID, $scope.startdateSelected, $scope.enddateSelected).then(function (response) {
+
                     $scope.existingEvents = [];
+                    //  while(response.events){
                     $scope.numberOfEvents.push(response.events.length);
 
                     for (var j = 0; j < response.events.length; j++) {
@@ -165,7 +171,7 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
                         $scope.eventId = response.events[j].event;
                         $scope.eventDV = response.events[j].dataValues;
                         $scope.eventOrgUnit = response.events[j].orgUnitName;
-                        $scope.eventOrgUnitId = response.events[j].orgUnit;                                                           
+                        $scope.eventOrgUnitId = response.events[j].orgUnit;
                         var heirarchyLevel = getheirarchy($scope.eventOrgUnitId);
                         for (var a = 0; a < $scope.eventDV.length; a++) {
                             if ($scope.eventDV[a].value == 'Approved' || $scope.eventDV[a].value == 'Auto-Approved') {
@@ -240,72 +246,67 @@ dataApprovalApp.controller('ApprovedListController', function ($rootScope,
 
                             }
                         }
+                        //   }
                     }
-                }
-            })
-            $('#loader').hide();
+                })
+                $('#loader').hide();
+            }
         });
         $scope.show = true;
     }
 
-    getheirarchy = function(org){
-        $scope.hierarchy="";
-        var myMap=[];
-        var parent=""
-        
-    $.ajax({
-        async : false,
-        type: "GET",
-        url: "../../organisationUnits/"+ org +".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
-        success: function(data){
-        if(data.level==2)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        }
-        if(data.level==3)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        }
-        if(data.level==4)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        myMap.push(data.parent.parent.parent.name)
-        }
-        if(data.level==5)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        myMap.push(data.parent.parent.parent.name)
-        myMap.push(data.parent.parent.parent.parent.name)
-        }
-        if(data.level==6)
-        {
-        myMap.push(data.name);
-        myMap.push(data.parent.name)
-        myMap.push(data.parent.parent.name)
-        myMap.push(data.parent.parent.parent.name)
-        myMap.push(data.parent.parent.parent.parent.name)
-        myMap.push(data.parent.parent.parent.parent.parent.name)
-        }
-        // $scope.programs.push({name:"",id:""});
-      }
+    getheirarchy = function (org) {
+        $scope.hierarchy = "";
+        var myMap = [];
+        var parent = ""
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: "../../organisationUnits/" + org + ".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
+            success: function (data) {
+                if (data.level == 2) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                }
+                if (data.level == 3) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                }
+                if (data.level == 4) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.name)
+                }
+                if (data.level == 5) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.parent.name)
+                }
+                if (data.level == 6) {
+                    myMap.push(data.name);
+                    myMap.push(data.parent.name)
+                    myMap.push(data.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.parent.name)
+                    myMap.push(data.parent.parent.parent.parent.parent.name)
+                }
+                // $scope.programs.push({name:"",id:""});
+            }
         });
 
-        for(var i=myMap.length-1;i>=0;i--)
-        {
-        $scope.hierarchy+=myMap[i]+"/";
+        for (var i = myMap.length - 1; i >= 0; i--) {
+            $scope.hierarchy += myMap[i] + "/";
         }
-      
+
         return $scope.hierarchy;
-     }
-    
-     $scope.exportExcel = function() {
+    }
+
+    $scope.exportExcel = function () {
         var a = document.createElement('a');
         var data_type = 'data:application/vnd.ms-excel';
         var table_div = document.getElementById('tableid');

@@ -1,10 +1,9 @@
 /**
  * Created by wasib & gourav on 31/12/17.
  */
-
 dataApprovalApp
         .controller('homeController', function ($rootScope,
-                $scope, $location) {
+                                                $scope, $location) {
                 $scope.applicationsForApproval = function () {
                         $location.path('/applications-for-approval').search();
                 },

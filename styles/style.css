@@ -6,6 +6,48 @@ html, body {
     font-size: 10pt;
 }
 
+.main{
+    position:relative;
+    margin-top:50px;
+    display:flex;
+    flex-flow:column wrap;
+    width:900px;
+    height:100%;
+}
+
+.left{
+
+    height:250px;
+    width:235px;;
+    background-color: #f3f3f3;
+
+}
+
+.leftOU{
+    height:400px;
+    
+    background-color: #f3f3f3;
+
+
+}
+
+.mainDiv{
+    height:100%;
+    width:100%;
+    margin-left:1%;
+}
+
+.mainDiv td{
+}
+.leftBarTable{
+    margin-top:70px;
+    
+}
+
+.leftBarTable td{
+    vertical-align:top;
+    padding:1%;
+} 
 
 .xls{
 	    margin-top: -50px !important;
@@ -288,7 +330,6 @@ input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spi
 
 .table-borderless {
     width: 100%;
-    table-layout: fixed;
 }
 
 .table-borderless>thead>tr>th, 

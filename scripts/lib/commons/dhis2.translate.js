@@ -100,7 +100,7 @@ dhis2.translate = dhis2.translate || {};
      */
     function getTranslationsFromServer(translateKeys, callback) {
         var http = new XMLHttpRequest();
-        var url = getBaseUrl() + "/api/i18n";
+        var url = getBaseUrl() + "api/i18n";
         var keysToTranslate = JSON.stringify(translateKeys);
         http.open("POST", url, true);
 

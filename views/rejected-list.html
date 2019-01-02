@@ -1,21 +1,13 @@
-<div id="leftBar">
-    <d2-left-bar></d2-left-bar>
-
-    <div id="orgUnitTree">
-        <ul>
-        </ul>
-    </div>
-
-</div>
 
 <div id="mainPage">
-    <div class="row">
-        <div class="col-sm-12 col-md-10">
+    <div class="">
+        <div class="">
             <table class="table table-borderless table-striped">
                 <tr>
                     <td>{{'orgUnitLabel' | translate}}</td>
                     <td>
-                        <input type="text" class="form-control" value="{{selectedOrgUnit.name|| 'please_select'| translate}}" ng-disabled="true">
+                        <input type="text" class="form-control" value="{{selectedOrgUnit.name|| 'please_select'| translate}}"
+                            ng-disabled="true">
                     </td>
                 </tr>
 
@@ -23,7 +15,7 @@
                     <td>
                         {{'programs'| translate}}
                     </td>
-                    <td class='col-sm-4 col-md-3'>
+                    <td class=''>
                         <select ng-model="selectedProgram" class="form-control" ng-options="program.name for program in programs | orderBy: 'name'"
                             ng-change="getProgramStages(selectedProgram)">
                             <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
@@ -33,7 +25,7 @@
                     <td>
                         {{'program_stage'| translate}}
                     </td>
-                    <td class='col-sm-4 col-md-3'>
+                    <td class=''>
                         <select ng-model="selectedProgramStage" class="form-control" ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
                             ng-change="getSelectedProgramStage(selectedProgramStage)">
                             <option value="">{{'Please select program stage'| translate}}</option>
@@ -45,19 +37,21 @@
                         <label>Start Date </label>
                     </td>
                     <td>
-                        <input calendar ng-model='startdate' class="form-control" ng-change="updateStartDate(startdate);" required />
+                        <input calendar ng-model='startdate' class="form-control" ng-change="updateStartDate(startdate);"
+                            required />
                     </td>
                     <td>
                         <label>End Date </label>
                     </td>
                     <td>
-                        <input calendar ng-model='enddate' class="form-control" ng-change="updateEndDate(enddate);" required/>
+                        <input calendar ng-model='enddate' class="form-control" ng-change="updateEndDate(enddate);"
+                            required />
                     </td>
                 </tr>
 
             </table>
 
-            <div class="col-md-12 trim">
+            <div class="">
                 <button type="button" class="btn btn-primary center-block" ng-click="presubmitData(selectedProgram, report, selectedOuMode);showLoad();"
                     ng-disabled="!selectedProgram">{{'fetch_records'| translate}}</button>
             </div>
